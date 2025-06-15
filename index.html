@@ -1,23 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Private Homepage</title>
   <style>
-    /* Full-screen background image container */
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       font-family: Arial, sans-serif;
-      position: relative;
-      overflow-x: hidden;
-      color: #000000;
       background: transparent;
+      color: #000;
     }
 
-    /* Background image with opacity */
+    /* Background image */
     #bg-image {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -29,39 +26,27 @@
       filter: brightness(0.9);
     }
 
-    /* Content container */
+    /* Main content */
     .content {
       position: relative;
-      margin: 50px auto;
       max-width: 600px;
-      background-color: rgba(255, 255, 255, 0.85); /* white with some transparency */
+      margin: 50px auto;
       padding: 20px 30px;
+      background-color: rgba(255, 255, 255, 0.85);
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      min-height: 150px;
     }
 
     .date {
       font-weight: bold;
       margin-bottom: 20px;
       font-size: 1.5em;
-      line-height: 1.3em;
-      width: 100%;
-      text-align: justify;
-      text-align-last: justify;
-      -moz-text-align-last: justify;
-      -webkit-text-align-last: justify;
-    }
-
-    .date br {
-      display: block;
-      content: "";
-      margin-bottom: 0.3em;
+      line-height: 1.4em;
+      text-align: left;
     }
 
     .votd-container {
-      margin: 30px auto 0;
-      max-width: 100%;
+      margin-top: 30px;
       background-color: #f4f4f4;
       padding: 15px;
       border-radius: 8px;
@@ -71,10 +56,10 @@
   </style>
 </head>
 <body>
-  <!-- Background image div -->
+  <!-- Background image -->
   <div id="bg-image"></div>
 
-  <!-- Main content -->
+  <!-- Page content -->
   <div class="content">
     <div class="date" id="date"></div>
 
@@ -82,13 +67,20 @@
       <script src="https://www.biblegateway.com/votd/votd.write.callback.js"></script>
       <script src="https://www.biblegateway.com/votd/get/?format=json&version=NIV&callback=BG.votdWriteCallback"></script>
       <noscript>
-        <iframe framespacing="0" frameborder="no" src="https://www.biblegateway.com/votd/get/?format=html&version=NIV" style="width:100%; height:200px;"></iframe>
+        <iframe framespacing="0" frameborder="no"
+          src="https://www.biblegateway.com/votd/get/?format=html&version=NIV"
+          style="width:100%; height:200px;"></iframe>
       </noscript>
     </div>
   </div>
 
   <script>
-    // Set the date text
+    // Set background image from Unsplash
+    const bgImage = document.getElementById('bg-image');
+    const unsplashURL = 'https://source.unsplash.com/1600x900/daily/?landscape,nature';
+    bgImage.style.backgroundImage = `url('${unsplashURL}')`;
+
+    // Set formatted date
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
@@ -96,16 +88,8 @@
       const dayName = today.toLocaleDateString(undefined, { weekday: "long" });
       const monthDayYear = today.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 
-      dateElement.innerHTML = `<span class="day">${dayName}</span><br><span class="month-day-year">${monthDayYear}</span>`;
+      dateElement.innerHTML = `<div>${dayName}</div><div>${monthDayYear}</div>`;
     });
-
-    // Set the background image from Unsplash landscape photo
-    // URL includes 'daily' keyword for new random photo daily, with landscape orientation
-    // You can tweak the search query below to suit your tastes
-    const bgImage = document.getElementById('bg-image');
-    const unsplashURL = 'https://source.unsplash.com/daily?landscape,nature';
-
-    bgImage.style.backgroundImage = `url('${unsplashURL}')`;
   </script>
 </body>
 </html>
