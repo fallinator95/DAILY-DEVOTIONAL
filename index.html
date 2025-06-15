@@ -44,7 +44,6 @@
       min-width: 280px;
       word-break: break-word;
       color: white;
-      font-family: Helvetica, Arial, sans-serif;
     }
 
     @media (min-width: 600px) {
@@ -54,17 +53,18 @@
       }
     }
 
-    .votd-wrapper {
+    .votd-wrapper,
+    .podcast-player {
       flex: 1 1 280px;
       min-width: 280px;
+      max-width: 500px;
       background-color: rgba(255, 255, 255, 0.65);
       border-radius: 8px;
       padding: 15px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
       font-family: Helvetica, Arial, sans-serif;
-      align-self: flex-start;
-      max-width: 500px;
-      overflow-wrap: break-word;
+      font-size: 1em;
+      color: #000;
     }
 
     .votd-wrapper iframe {
@@ -72,29 +72,23 @@
       height: 200px;
       border: none;
       border-radius: 6px;
-      font-family: Helvetica, Arial, sans-serif;
-    }
-
-    .podcast-player {
-      max-width: 900px;
-      margin: 20px auto 40px;
-      padding: 15px;
-      background-color: rgba(255, 255, 255, 0.7);
-      border-radius: 8px;
-      font-family: Helvetica, Arial, sans-serif;
-      color: #000;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
     }
 
     .podcast-player h2 {
       margin-bottom: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
     }
 
     .podcast-player audio {
       width: 100%;
       border-radius: 8px;
       outline: none;
-      box-shadow: 0 0 6px rgba(0,0,0,0.3);
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .podcast-player #episode-title {
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -114,12 +108,12 @@
         ></iframe>
       </noscript>
     </div>
-  </div>
 
-  <div class="podcast-player" id="podcast-player">
-    <h2>Latest Podcast Episode</h2>
-    <div id="episode-title">Loading...</div>
-    <audio id="audio-player" controls preload="none"></audio>
+    <div class="podcast-player" id="podcast-player">
+      <h2>Latest Podcast Episode</h2>
+      <div id="episode-title">Loading...</div>
+      <audio id="audio-player" controls preload="none"></audio>
+    </div>
   </div>
 
   <script>
@@ -141,36 +135,27 @@
 
     // Fetch and parse podcast RSS feed
     async function loadLatestEpisode() {
-      const CORS_PROXY = 'https://api.allorigins.win/get?url='; // Free proxy to avoid CORS issues
+      const CORS_PROXY = 'https://api.allorigins.win/get?url=';
       const feedUrl = encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss');
       try {
         const response = await fetch(CORS_PROXY + feedUrl);
         const data = await response.json();
 
-        // Parse XML string
         const parser = new DOMParser();
         const xml = parser.parseFromString(data.contents, "text/xml");
-
-        // Find first <item> element (latest episode)
         const firstItem = xml.querySelector("item");
-        if (!firstItem) throw new Error("No episodes found in RSS feed");
+        if (!firstItem) throw new Error("No episodes found");
 
         const title = firstItem.querySelector("title")?.textContent || "Untitled Episode";
-        const enclosure = firstItem.querySelector("enclosure");
-        const audioUrl = enclosure?.getAttribute("url");
+        const audioUrl = firstItem.querySelector("enclosure")?.getAttribute("url");
 
         if (!audioUrl) throw new Error("Audio URL not found");
 
-        // Update DOM
-        const titleElem = document.getElementById("episode-title");
-        const audioPlayer = document.getElementById("audio-player");
-
-        titleElem.textContent = title;
-        audioPlayer.src = audioUrl;
-
+        document.getElementById("episode-title").textContent = title;
+        document.getElementById("audio-player").src = audioUrl;
       } catch (error) {
         const playerDiv = document.getElementById("podcast-player");
-        playerDiv.innerHTML = `<p style="color: red;">Failed to load podcast episode: ${error.message}</p>`;
+        playerDiv.innerHTML = `<p style="color: red;">Failed to load podcast: ${error.message}</p>`;
         console.error(error);
       }
     }
