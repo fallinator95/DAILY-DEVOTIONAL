@@ -37,7 +37,7 @@
 
     .date {
       font-weight: bold;
-      font-size: 3.5em;
+      font-size: 3.8em;
       line-height: 1.2em;
       text-align: left;
       flex: 1 1 280px;
@@ -48,7 +48,7 @@
 
     @media (min-width: 600px) {
       .date {
-        font-size: 3em;
+        font-size: 3.5em;
         max-width: 400px;
       }
     }
@@ -116,12 +116,12 @@
   </div>
 
   <script>
-    // Background image
+    // Set background image
     const bgImage = document.getElementById('bg-image');
     const unsplashURL = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80';
     bgImage.style.backgroundImage = `url('${unsplashURL}')`;
 
-    // Display date
+    // Show formatted date
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
@@ -134,28 +134,29 @@
 
     // Load latest podcast episode
     async function loadLatestEpisode() {
-      const proxy = 'https://api.allorigins.win/get?url=';
+      const proxy = 'https://corsproxy.io/?';
       const feedUrl = 'https://anchor.fm/s/5073b270/podcast/rss';
-      const url = proxy + encodeURIComponent(feedUrl);
+      const url = `${proxy}${encodeURIComponent(feedUrl)}`;
 
       try {
         const res = await fetch(url);
         if (!res.ok) throw new Error(res.statusText);
-        const data = await res.json();
+        const rssText = await res.text();
 
-        const xml = new DOMParser().parseFromString(data.contents, "application/xml");
+        const xml = new DOMParser().parseFromString(rssText, "text/xml");
         const item = xml.querySelector("item");
         if (!item) throw new Error("No episodes found");
 
-        const title = item.querySelector("title")?.textContent || "Untitled";
+        const title = item.querySelector("title")?.textContent || "Untitled Episode";
         const audioUrl = item.querySelector("enclosure")?.getAttribute("url");
-        if (!audioUrl) throw new Error("Audio link missing");
+        if (!audioUrl) throw new Error("Audio URL not found");
 
         document.getElementById("episode-title").textContent = title;
         document.getElementById("audio-player").src = audioUrl;
+
       } catch (err) {
-        document.getElementById("podcast-player").innerHTML =
-          `<p style="color:red;">Podcast load failed: ${err.message}</p>`;
+        const playerDiv = document.getElementById("podcast-player");
+        playerDiv.innerHTML = `<p style="color:red;">Podcast load failed: ${err.message}</p>`;
         console.error(err);
       }
     }
