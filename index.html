@@ -50,34 +50,24 @@
       min-width: 280px;
     }
     .votd-wrapper,
+    .podcast-player,
     .prayer-section,
     .ten-words-section {
-      max-width: 500px;
-      margin: 0 auto 22px auto;
-    }
-    .podcast-player {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      max-width: 900px;
-      margin-bottom: 22px;
-      background-color: rgba(255, 255, 255, 0.65);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-    }
-    .podcast-player-content {
-      flex: 1;
+      flex: 1 1 280px;
       min-width: 280px;
+      max-width: 500px;
     }
-    .podcast-player h2 {
-      margin-bottom: 10px;
+    h2 {
+      margin-top: 0;
       font-size: 1.2em;
       font-weight: bold;
     }
+    .podcast-player h2 {
+      margin-bottom: 10px;
+    }
     .podcast-player select {
       width: 100%;
-      margin-bottom: 15px; /* gap between dropdown and audio */
+      margin-bottom: 15px; /* same gap as between h2 and player */
       padding: 8px;
       border-radius: 4px;
       font-size: 1em;
@@ -87,19 +77,6 @@
       border-radius: 8px;
       outline: none;
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
-    }
-    .podcast-thumbnail {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 8px;
-      padding: 10px 10px 10px 0; /* top, right, bottom, no left */
-      flex-shrink: 0;
-    }
-    h2 {
-      margin-top: 0;
-      font-size: 1.2em;
-      font-weight: bold;
     }
     ul.members-list {
       list-style: none;
@@ -144,13 +121,10 @@
       <ul class="members-list" id="prayer-members"></ul>
     </div>
 
-    <div class="podcast-player" id="podcast-player">
-      <div class="podcast-player-content">
-        <h2>Latest RBT Reading</h2>
-        <select id="episode-select"></select>
-        <audio id="audio-player" controls preload="none"></audio>
-      </div>
-      <img src="" alt="Podcast Thumbnail" id="podcast-thumbnail" class="podcast-thumbnail" />
+    <div class="podcast-player box" id="podcast-player">
+      <h2>Latest RBT Reading</h2>
+      <select id="episode-select"></select>
+      <audio id="audio-player" controls preload="none"></audio>
     </div>
 
     <div class="ten-words-section box">
@@ -199,11 +173,9 @@
         document.getElementById("prayer-members").appendChild(li);
       });
 
-      // Podcast episodes dropdown, player & thumbnail
+      // Podcast episodes dropdown & player
       const sel = document.getElementById("episode-select"),
-            audio = document.getElementById("audio-player"),
-            thumb = document.getElementById("podcast-thumbnail");
-
+            audio = document.getElementById("audio-player");
       fetch(`https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss')}`)
         .then(r => r.text())
         .then(txt=>{
@@ -220,15 +192,16 @@
           // select first and play
           sel.selectedIndex=0;
           audio.src=sel.options[0].value;
-
-          // Get thumbnail from channel image (fallback)
-          let channelImage = xml.querySelector("channel > image > url")?.textContent;
-          if(channelImage) thumb.src = channelImage;
-          else thumb.style.display = "none";
-
-          // On episode change update player and thumbnail if episode has image
+          // change handler
           sel.onchange=()=>{
             audio.src=sel.value;
-
-            // Try to update thumbnail for selected episode if available
-            const selectedItem = items[sel.selectedIndex];
+          };
+        })
+        .catch(e=>{
+          document.getElementById("podcast-player").innerHTML=
+            `<p style="color:red;">Podcast load failed: ${e.message}</p>`;
+        });
+    });
+  </script>
+</body>
+</html>
