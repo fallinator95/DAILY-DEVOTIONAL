@@ -70,12 +70,12 @@
   </div>
 
   <script>
-    // Reliable daily background photo
+    // Set background image to colourful landscape from Unsplash (random on each load)
     const bgImage = document.getElementById('bg-image');
-    const unsplashURL = 'https://picsum.photos/1600/900?grayscale&blur=1';
+    const unsplashURL = 'https://source.unsplash.com/1600x900/?colorful,landscape,nature';
     bgImage.style.backgroundImage = `url('${unsplashURL}')`;
 
-    // Set date
+    // Set formatted date
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
