@@ -8,7 +8,7 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
+      min-height: 100%;
       font-family: Helvetica, Arial, sans-serif;
       background: transparent;
       color: #000;
@@ -25,20 +25,25 @@
       filter: brightness(0.9);
     }
 
-    .top-container {
+    .container {
       max-width: 900px;
-      margin: 15px auto 20px;
-      padding: 0 15px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    .flex-top {
       display: flex;
       flex-wrap: wrap;
-      justify-content: flex-start;
+      justify-content: space-between;
       gap: 20px;
     }
 
-    .section {
-      max-width: 900px;
-      margin: 0 auto 30px;
-      padding: 0 15px;
+    .box {
+      background-color: rgba(255, 255, 255, 0.65);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
     }
 
     .date {
@@ -46,17 +51,9 @@
       font-size: 3.8em;
       line-height: 1.2em;
       text-align: left;
+      color: white;
       flex: 1 1 280px;
       min-width: 280px;
-      word-break: break-word;
-      color: white;
-    }
-
-    @media (min-width: 600px) {
-      .date {
-        font-size: 3.5em;
-        max-width: 400px;
-      }
     }
 
     .votd-wrapper,
@@ -66,24 +63,10 @@
       flex: 1 1 280px;
       min-width: 280px;
       max-width: 500px;
-      background-color: rgba(255, 255, 255, 0.65);
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-      font-size: 1em;
-      color: #000;
-      margin: 20px auto;
-    }
-
-    .votd-wrapper iframe {
-      width: 100%;
-      height: 200px;
-      border: none;
-      border-radius: 6px;
     }
 
     h2 {
-      margin-bottom: 10px;
+      margin-top: 0;
       font-size: 1.2em;
       font-weight: bold;
     }
@@ -95,12 +78,13 @@
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
     }
 
-    .members-list {
+    ul.members-list {
       list-style: none;
-      padding: 0;
+      padding-left: 0;
       margin: 0;
     }
-    .members-list li {
+
+    ul.members-list li {
       margin: 5px 0;
     }
 
@@ -112,63 +96,69 @@
     .ten-words-section ol li {
       margin-bottom: 8px;
     }
+
+    .bottom-spacer {
+      height: 40px;
+    }
   </style>
 </head>
 <body>
   <div id="bg-image"></div>
+  <div class="container">
 
-  <div class="top-container">
-    <div class="date" id="date"></div>
+    <div class="flex-top">
+      <div class="date" id="date"></div>
 
-    <div class="votd-wrapper">
-      <script src="https://www.biblegateway.com/votd/votd.write.callback.js"></script>
-      <script src="https://www.biblegateway.com/votd/get/?format=json&version=NIV&callback=BG.votdWriteCallback"></script>
-      <noscript>
-        <iframe
-          src="https://www.biblegateway.com/votd/get/?format=html&version=NIV"
-          title="Bible Verse of the Day"
-        ></iframe>
-      </noscript>
+      <div class="votd-wrapper box">
+        <script src="https://www.biblegateway.com/votd/votd.write.callback.js"></script>
+        <script src="https://www.biblegateway.com/votd/get/?format=json&version=NIV&callback=BG.votdWriteCallback"></script>
+        <noscript>
+          <iframe
+            src="https://www.biblegateway.com/votd/get/?format=html&version=NIV"
+            title="Bible Verse of the Day"
+            width="100%" height="200"
+          ></iframe>
+        </noscript>
+      </div>
     </div>
-  </div>
 
-  <!-- Members to Pray For -->
-  <div class="section prayer-section">
-    <h2>Members to Pray For</h2>
-    <ul class="members-list" id="prayer-members"></ul>
-  </div>
+    <div class="prayer-section box">
+      <h2>Members to Pray For</h2>
+      <ul class="members-list" id="prayer-members"></ul>
+    </div>
 
-  <!-- Podcast Section -->
-  <div class="section podcast-player" id="podcast-player">
-    <h2>Latest RBT Reading</h2>
-    <div id="episode-title">Loading...</div>
-    <audio id="audio-player" controls preload="none"></audio>
-  </div>
+    <div class="podcast-player box" id="podcast-player">
+      <h2>Latest RBT Reading</h2>
+      <div id="episode-title">Loading...</div>
+      <audio id="audio-player" controls preload="none"></audio>
+    </div>
 
-  <!-- The 10 Words Section -->
-  <div class="section ten-words-section">
-    <h2>The 10 Words</h2>
-    <ol>
-      <li>You shall have no other gods before me.</li>
-      <li>You shall not make for yourself a carved image.</li>
-      <li>You shall not take the name of the Lord your God in vain.</li>
-      <li>Remember the Sabbath day, to keep it holy.</li>
-      <li>Honor your father and your mother.</li>
-      <li>You shall not murder.</li>
-      <li>You shall not commit adultery.</li>
-      <li>You shall not steal.</li>
-      <li>You shall not bear false witness against your neighbor.</li>
-      <li>You shall not covet.</li>
-    </ol>
+    <div class="ten-words-section box">
+      <h2>The 10 Words</h2>
+      <ol>
+        <li>You shall have no other gods before me.</li>
+        <li>You shall not make for yourself a carved image.</li>
+        <li>You shall not take the name of the Lord your God in vain.</li>
+        <li>Remember the Sabbath day, to keep it holy.</li>
+        <li>Honor your father and your mother.</li>
+        <li>You shall not murder.</li>
+        <li>You shall not commit adultery.</li>
+        <li>You shall not steal.</li>
+        <li>You shall not bear false witness against your neighbor.</li>
+        <li>You shall not covet.</li>
+      </ol>
+    </div>
+
+    <div class="bottom-spacer"></div>
   </div>
 
   <script>
-    // Set background image
+    // Background image
     const bgImage = document.getElementById('bg-image');
     const unsplashURL = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80';
     bgImage.style.backgroundImage = `url('${unsplashURL}')`;
 
-    // Format and insert the date
+    // Set date
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
@@ -176,22 +166,38 @@
       const monthDayYear = today.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
       dateElement.innerHTML = `<div>${dayName}</div><div>${monthDayYear}</div>`;
 
-      // Members to Pray For
-      const allMembers = [
+      // Members to Pray For – deterministic daily
+      const members = [
         "Chris Fall", "Amy Fall", "Aron Williams",
         "Isabel Williams", "Lee Jones", "Sam Smith"
       ];
-      const shuffled = allMembers.sort(() => 0.5 - Math.random());
-      const selected = shuffled.slice(0, 2);
-      const list = document.getElementById("prayer-members");
-      selected.forEach(name => {
+
+      const seed = new Date().toISOString().slice(0, 10).split('-').join('');
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+      }
+
+      function seededRandom(seed) {
+        const x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
+      }
+
+      const selected = [...members];
+      for (let i = selected.length - 1; i > 0; i--) {
+        const j = Math.floor(seededRandom(hash + i) * (i + 1));
+        [selected[i], selected[j]] = [selected[j], selected[i]];
+      }
+
+      const prayerList = document.getElementById("prayer-members");
+      selected.slice(0, 2).forEach(name => {
         const li = document.createElement("li");
         li.textContent = name;
-        list.appendChild(li);
+        prayerList.appendChild(li);
       });
     });
 
-    // Load latest podcast episode
+    // Load latest podcast
     async function loadLatestEpisode() {
       const proxy = 'https://corsproxy.io/?';
       const feedUrl = 'https://anchor.fm/s/5073b270/podcast/rss';
@@ -201,14 +207,11 @@
         const res = await fetch(url);
         if (!res.ok) throw new Error(res.statusText);
         const rssText = await res.text();
-
         const xml = new DOMParser().parseFromString(rssText, "text/xml");
         const item = xml.querySelector("item");
-        if (!item) throw new Error("No episodes found");
-
-        const title = item.querySelector("title")?.textContent || "Untitled Episode";
+        const title = item.querySelector("title")?.textContent || "Untitled";
         const audioUrl = item.querySelector("enclosure")?.getAttribute("url");
-        if (!audioUrl) throw new Error("Audio URL not found");
+        if (!audioUrl) throw new Error("No audio URL found");
 
         document.getElementById("episode-title").textContent = title;
         document.getElementById("audio-player").src = audioUrl;
