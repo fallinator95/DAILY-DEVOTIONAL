@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>My Private Homepage</title>
   <style>
     html, body {
@@ -25,66 +25,81 @@
       filter: brightness(0.9);
     }
 
-    .date {
-      position: relative;
-      font-weight: bold;
+    /* Container to hold date and bible widget side-by-side */
+    .top-container {
+      max-width: 900px;
       margin: 50px auto 20px;
+      padding: 0 15px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 20px;
+    }
+
+    .date {
+      font-weight: bold;
       font-size: 2.5em;
       line-height: 1.2em;
       text-align: left;
-      max-width: 100%;
-      padding: 0 15px;
+      flex: 1 1 280px;
+      min-width: 280px;
       word-break: break-word;
     }
 
     @media (min-width: 600px) {
       .date {
-        max-width: 600px;
         font-size: 2em;
-        padding: 0 30px;
+        max-width: 400px;
       }
     }
 
     .votd-wrapper {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 0 30px;
+      flex: 1 1 280px;
+      min-width: 280px;
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      font-family: Arial, sans-serif;
+      align-self: flex-start;
+      max-width: 500px;
+      overflow-wrap: break-word;
     }
 
-    .votd-container {
-      margin-top: 30px;
-      background-color: rgba(255, 255, 255, 0.85);
-      padding: 15px;
-      border-radius: 8px;
-      font-family: Arial, sans-serif;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    /* Bible Gateway iframe fallback styling */
+    .votd-wrapper iframe {
+      width: 100%;
+      height: 200px;
+      border: none;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
   <div id="bg-image"></div>
 
-  <div class="date" id="date"></div>
+  <div class="top-container">
+    <div class="date" id="date"></div>
 
-  <div class="votd-wrapper">
-    <div class="votd-container">
+    <div class="votd-wrapper">
       <script src="https://www.biblegateway.com/votd/votd.write.callback.js"></script>
       <script src="https://www.biblegateway.com/votd/get/?format=json&version=NIV&callback=BG.votdWriteCallback"></script>
       <noscript>
-        <iframe framespacing="0" frameborder="no"
+        <iframe
           src="https://www.biblegateway.com/votd/get/?format=html&version=NIV"
-          style="width:100%; height:200px;"></iframe>
+          title="Bible Verse of the Day"
+        ></iframe>
       </noscript>
     </div>
   </div>
 
   <script>
-    // Set background image to colourful landscape from Unsplash (random on each load)
+    // Static Unsplash colourful landscape background
     const bgImage = document.getElementById('bg-image');
-    const unsplashURL = 'https://source.unsplash.com/1600x900/?colorful,landscape,nature';
+    const unsplashURL = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80';
     bgImage.style.backgroundImage = `url('${unsplashURL}')`;
 
-    // Set formatted date
+    // Format and insert date
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
