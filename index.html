@@ -14,7 +14,6 @@
       color: #000;
     }
 
-    /* Background image */
     #bg-image {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -26,7 +25,6 @@
       filter: brightness(0.9);
     }
 
-    /* Date styling directly on background */
     .date {
       position: relative;
       font-weight: bold;
@@ -38,7 +36,6 @@
       padding: 0 30px;
     }
 
-    /* Bible widget container only */
     .votd-wrapper {
       max-width: 600px;
       margin: 0 auto;
@@ -56,13 +53,10 @@
   </style>
 </head>
 <body>
-  <!-- Background image -->
   <div id="bg-image"></div>
 
-  <!-- Date text directly over background -->
   <div class="date" id="date"></div>
 
-  <!-- Bible verse with background -->
   <div class="votd-wrapper">
     <div class="votd-container">
       <script src="https://www.biblegateway.com/votd/votd.write.callback.js"></script>
@@ -76,12 +70,12 @@
   </div>
 
   <script>
-    // Set background image from Unsplash
+    // Reliable daily background photo
     const bgImage = document.getElementById('bg-image');
-    const unsplashURL = 'https://source.unsplash.com/1600x900/daily/?landscape,nature';
+    const unsplashURL = 'https://picsum.photos/1600/900?grayscale&blur=1';
     bgImage.style.backgroundImage = `url('${unsplashURL}')`;
 
-    // Set formatted date
+    // Set date
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
