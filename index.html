@@ -62,7 +62,6 @@
       border-radius: 8px;
       padding: 15px;
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-      font-family: Helvetica, Arial, sans-serif;
       font-size: 1em;
       color: #000;
     }
@@ -122,7 +121,7 @@
     const unsplashURL = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80';
     bgImage.style.backgroundImage = `url('${unsplashURL}')`;
 
-    // Date display
+    // Display date
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
@@ -133,30 +132,31 @@
       dateElement.innerHTML = `<div>${dayName}</div><div>${monthDayYear}</div>`;
     });
 
-    // Fetch and parse podcast RSS feed
+    // Load latest podcast episode
     async function loadLatestEpisode() {
-      const CORS_PROXY = 'https://api.allorigins.win/get?url=';
-      const feedUrl = encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss');
+      const proxy = 'https://api.allorigins.win/get?url=';
+      const feedUrl = 'https://anchor.fm/s/5073b270/podcast/rss';
+      const url = proxy + encodeURIComponent(feedUrl);
+
       try {
-        const response = await fetch(CORS_PROXY + feedUrl);
-        const data = await response.json();
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
 
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(data.contents, "text/xml");
-        const firstItem = xml.querySelector("item");
-        if (!firstItem) throw new Error("No episodes found");
+        const xml = new DOMParser().parseFromString(data.contents, "application/xml");
+        const item = xml.querySelector("item");
+        if (!item) throw new Error("No episodes found");
 
-        const title = firstItem.querySelector("title")?.textContent || "Untitled Episode";
-        const audioUrl = firstItem.querySelector("enclosure")?.getAttribute("url");
-
-        if (!audioUrl) throw new Error("Audio URL not found");
+        const title = item.querySelector("title")?.textContent || "Untitled";
+        const audioUrl = item.querySelector("enclosure")?.getAttribute("url");
+        if (!audioUrl) throw new Error("Audio link missing");
 
         document.getElementById("episode-title").textContent = title;
         document.getElementById("audio-player").src = audioUrl;
-      } catch (error) {
-        const playerDiv = document.getElementById("podcast-player");
-        playerDiv.innerHTML = `<p style="color: red;">Failed to load podcast: ${error.message}</p>`;
-        console.error(error);
+      } catch (err) {
+        document.getElementById("podcast-player").innerHTML =
+          `<p style="color:red;">Podcast load failed: ${err.message}</p>`;
+        console.error(err);
       }
     }
 
