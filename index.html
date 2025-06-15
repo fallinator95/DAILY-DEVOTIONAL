@@ -35,6 +35,12 @@
       gap: 20px;
     }
 
+    .section {
+      max-width: 900px;
+      margin: 0 auto 30px;
+      padding: 0 15px;
+    }
+
     .date {
       font-weight: bold;
       font-size: 3.8em;
@@ -54,7 +60,9 @@
     }
 
     .votd-wrapper,
-    .podcast-player {
+    .podcast-player,
+    .prayer-section,
+    .ten-words-section {
       flex: 1 1 280px;
       min-width: 280px;
       max-width: 500px;
@@ -64,6 +72,7 @@
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
       font-size: 1em;
       color: #000;
+      margin: 20px auto;
     }
 
     .votd-wrapper iframe {
@@ -73,21 +82,35 @@
       border-radius: 6px;
     }
 
-    .podcast-player h2 {
+    h2 {
       margin-bottom: 10px;
       font-size: 1.2em;
       font-weight: bold;
     }
 
-    .podcast-player audio {
+    audio {
       width: 100%;
       border-radius: 8px;
       outline: none;
       box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
     }
 
-    .podcast-player #episode-title {
-      margin-bottom: 10px;
+    .members-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .members-list li {
+      margin: 5px 0;
+    }
+
+    .ten-words-section ol {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .ten-words-section ol li {
+      margin-bottom: 8px;
     }
   </style>
 </head>
@@ -107,12 +130,36 @@
         ></iframe>
       </noscript>
     </div>
+  </div>
 
-    <div class="podcast-player" id="podcast-player">
-      <h2>Latest Podcast Episode</h2>
-      <div id="episode-title">Loading...</div>
-      <audio id="audio-player" controls preload="none"></audio>
-    </div>
+  <!-- Members to Pray For -->
+  <div class="section prayer-section">
+    <h2>Members to Pray For</h2>
+    <ul class="members-list" id="prayer-members"></ul>
+  </div>
+
+  <!-- Podcast Section -->
+  <div class="section podcast-player" id="podcast-player">
+    <h2>Latest RBT Reading</h2>
+    <div id="episode-title">Loading...</div>
+    <audio id="audio-player" controls preload="none"></audio>
+  </div>
+
+  <!-- The 10 Words Section -->
+  <div class="section ten-words-section">
+    <h2>The 10 Words</h2>
+    <ol>
+      <li>You shall have no other gods before me.</li>
+      <li>You shall not make for yourself a carved image.</li>
+      <li>You shall not take the name of the Lord your God in vain.</li>
+      <li>Remember the Sabbath day, to keep it holy.</li>
+      <li>Honor your father and your mother.</li>
+      <li>You shall not murder.</li>
+      <li>You shall not commit adultery.</li>
+      <li>You shall not steal.</li>
+      <li>You shall not bear false witness against your neighbor.</li>
+      <li>You shall not covet.</li>
+    </ol>
   </div>
 
   <script>
@@ -121,15 +168,27 @@
     const unsplashURL = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80';
     bgImage.style.backgroundImage = `url('${unsplashURL}')`;
 
-    // Show formatted date
+    // Format and insert the date
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
-
       const dayName = today.toLocaleDateString(undefined, { weekday: "long" });
       const monthDayYear = today.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-
       dateElement.innerHTML = `<div>${dayName}</div><div>${monthDayYear}</div>`;
+
+      // Members to Pray For
+      const allMembers = [
+        "Chris Fall", "Amy Fall", "Aron Williams",
+        "Isabel Williams", "Lee Jones", "Sam Smith"
+      ];
+      const shuffled = allMembers.sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 2);
+      const list = document.getElementById("prayer-members");
+      selected.forEach(name => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        list.appendChild(li);
+      });
     });
 
     // Load latest podcast episode
