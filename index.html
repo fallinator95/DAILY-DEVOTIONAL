@@ -38,7 +38,7 @@
       border-radius: 8px;
       padding: 15px;
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-      margin-bottom: 22px;
+      margin-bottom: 16.5px; /* reduced 25% from 22px */
     }
     .date {
       font-weight: bold;
@@ -49,10 +49,7 @@
       flex: 1 1 280px;
       min-width: 280px;
     }
-    .votd-wrapper,
-    .podcast-player,
-    .prayer-section,
-    .ten-words-section {
+    .votd-wrapper {
       flex: 1 1 280px;
       min-width: 280px;
       max-width: 500px;
@@ -61,13 +58,19 @@
       margin-top: 0;
       font-size: 1.2em;
       font-weight: bold;
+      cursor: pointer;
+      user-select: none;
     }
-    .podcast-player h2 {
-      margin-bottom: 10px;
+    .collapsible-content {
+      margin-top: 10px;
+      display: none;
+    }
+    .collapsible-content.show {
+      display: block;
     }
     .podcast-player select {
       width: 100%;
-      margin-bottom: 15px; /* same gap as between h2 and player */
+      margin-bottom: 11.25px; /* 25% reduced from 15px */
       padding: 8px;
       border-radius: 4px;
       font-size: 1em;
@@ -84,17 +87,28 @@
       margin: 0;
     }
     ul.members-list li {
-      margin: 5px 0;
+      margin: 3.75px 0; /* 25% reduced from 5px */
     }
     .ten-words-section ol {
       padding-left: 20px;
       margin: 0;
     }
     .ten-words-section ol li {
-      margin-bottom: 8px;
+      margin-bottom: 6px; /* 25% reduced from 8px */
     }
     .bottom-spacer {
       height: 20px;
+    }
+    /* Add arrow indicator for collapsibles */
+    h2::after {
+      content: "▼";
+      float: right;
+      transition: transform 0.3s ease;
+      font-size: 0.9em;
+      color: #555;
+    }
+    h2.active::after {
+      transform: rotate(-180deg);
     }
   </style>
 </head>
@@ -116,31 +130,40 @@
       </div>
     </div>
 
-    <div class="prayer-section box">
-      <h2>Members to Pray For Today</h2>
-      <ul class="members-list" id="prayer-members"></ul>
+    <!-- Members to Pray For Today dropdown -->
+    <div class="box">
+      <h2 class="collapsible-header">Members to Pray For Today</h2>
+      <div class="collapsible-content prayer-section">
+        <ul class="members-list" id="prayer-members"></ul>
+      </div>
     </div>
 
-    <div class="podcast-player box" id="podcast-player">
-      <h2>Latest RBT Reading</h2>
-      <select id="episode-select"></select>
-      <audio id="audio-player" controls preload="none"></audio>
+    <!-- Podcast dropdown -->
+    <div class="box">
+      <h2 class="collapsible-header">Latest RBT Reading</h2>
+      <div class="collapsible-content podcast-player" id="podcast-player">
+        <select id="episode-select"></select>
+        <audio id="audio-player" controls preload="none"></audio>
+      </div>
     </div>
 
-    <div class="ten-words-section box">
-      <h2>The 10 Words</h2>
-      <ol>
-        <li>You shall have no other gods before me.</li>
-        <li>You shall not make for yourself a carved image.</li>
-        <li>You shall not take the name of the Lord your God in vain.</li>
-        <li>Remember the Sabbath day, to keep it holy.</li>
-        <li>Honor your father and your mother.</li>
-        <li>You shall not murder.</li>
-        <li>You shall not commit adultery.</li>
-        <li>You shall not steal.</li>
-        <li>You shall not bear false witness against your neighbor.</li>
-        <li>You shall not covet.</li>
-      </ol>
+    <!-- The 10 Words dropdown -->
+    <div class="box">
+      <h2 class="collapsible-header">The 10 Words</h2>
+      <div class="collapsible-content ten-words-section">
+        <ol>
+          <li>You shall have no other gods before me.</li>
+          <li>You shall not make for yourself a carved image.</li>
+          <li>You shall not take the name of the Lord your God in vain.</li>
+          <li>Remember the Sabbath day, to keep it holy.</li>
+          <li>Honor your father and your mother.</li>
+          <li>You shall not murder.</li>
+          <li>You shall not commit adultery.</li>
+          <li>You shall not steal.</li>
+          <li>You shall not bear false witness against your neighbor.</li>
+          <li>You shall not covet.</li>
+        </ol>
+      </div>
     </div>
 
     <div class="bottom-spacer"></div>
@@ -202,6 +225,22 @@
           document.getElementById("podcast-player").innerHTML=
             `<p style="color:red;">Podcast load failed: ${e.message}</p>`;
         });
+
+      // Collapsible toggles
+      const headers = document.querySelectorAll(".collapsible-header");
+      headers.forEach(header => {
+        header.addEventListener("click", () => {
+          const content = header.nextElementSibling;
+          const isVisible = content.classList.contains("show");
+          if(isVisible){
+            content.classList.remove("show");
+            header.classList.remove("active");
+          } else {
+            content.classList.add("show");
+            header.classList.add("active");
+          }
+        });
+      });
     });
   </script>
 </body>
