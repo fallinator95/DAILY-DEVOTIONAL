@@ -15,7 +15,7 @@
     }
     #bg-image {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
+      inset: 0;
       background-position: center center;
       background-size: cover;
       opacity: 0.8;
@@ -42,27 +42,22 @@
     }
     .date {
       font-weight: bold;
-      font-size: 3.8em;
+      font-size: 3.42em; /* 10% smaller than 3.8em */
       line-height: 1.2em;
       text-align: left;
       color: white;
       flex: 1 1 280px;
       min-width: 280px;
     }
-    .votd-wrapper {
-      flex: 1 1 280px;
-      min-width: 280px;
-      max-width: 500px;
-    }
     h2 {
-      margin-top: 0;
+      margin: 0;
       font-size: 1.2em;
       font-weight: bold;
       cursor: pointer;
       user-select: none;
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
     }
     .triangle {
       width: 0;
@@ -122,8 +117,10 @@
     <div class="flex-top">
       <div class="date" id="date"></div>
 
-      <div class="votd-wrapper box">
-        <h2 class="collapsible-header"><span class="triangle"></span>Verse of The Day</h2>
+      <div class="box votd-wrapper">
+        <h2 class="collapsible-header">
+          Verse of The Day <span class="triangle"></span>
+        </h2>
         <div class="collapsible-content">
           <script src="https://www.biblegateway.com/votd/votd.write.callback.js"></script>
           <script src="https://www.biblegateway.com/votd/get/?format=json&version=NIV&callback=BG.votdWriteCallback"></script>
@@ -136,14 +133,18 @@
     </div>
 
     <div class="box">
-      <h2 class="collapsible-header"><span class="triangle"></span>Members to Pray For Today</h2>
+      <h2 class="collapsible-header">
+        Members to Pray For Today <span class="triangle"></span>
+      </h2>
       <div class="collapsible-content prayer-section">
         <ul class="members-list" id="prayer-members"></ul>
       </div>
     </div>
 
     <div class="box">
-      <h2 class="collapsible-header"><span class="triangle"></span>Latest RBT Reading</h2>
+      <h2 class="collapsible-header">
+        Latest RBT Reading <span class="triangle"></span>
+      </h2>
       <div class="collapsible-content podcast-player" id="podcast-player">
         <select id="episode-select"></select>
         <audio id="audio-player" controls preload="none"></audio>
@@ -151,7 +152,9 @@
     </div>
 
     <div class="box">
-      <h2 class="collapsible-header"><span class="triangle"></span>The 10 Words</h2>
+      <h2 class="collapsible-header">
+        The 10 Words <span class="triangle"></span>
+      </h2>
       <div class="collapsible-content ten-words-section">
         <ol>
           <li>You shall have no other gods before me.</li>
@@ -168,6 +171,15 @@
       </div>
     </div>
 
+    <div class="box">
+      <h2 class="collapsible-header">
+        Psalm of The Day <span class="triangle"></span>
+      </h2>
+      <div class="collapsible-content psalm-section" id="psalm-section">
+        <div id="psalm-content" style="font-style: italic; min-height: 60px;">Loading...</div>
+      </div>
+    </div>
+
     <div class="bottom-spacer"></div>
   </div>
 
@@ -177,62 +189,64 @@
       document.getElementById('bg-image').style.backgroundImage =
         "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')";
 
-      // Set date
+      // Set date (weekday, then month day year without comma)
       const dt = new Date(),
             dayName = dt.toLocaleDateString(undefined, { weekday: 'long' }),
-            monthDayYear = dt.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            monthDayYear = dt.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }).replace(',', '');
       document.getElementById("date").innerHTML = `<div>${dayName}</div><div>${monthDayYear}</div>`;
+
+      // Collapsible toggles
+      document.querySelectorAll(".collapsible-header").forEach(header => {
+        header.addEventListener("click", () => {
+          header.classList.toggle("active");
+          header.nextElementSibling.classList.toggle("show");
+        });
+      });
 
       // Members to Pray For Today
       const members = ["Chris Fall","Amy Fall","Aron Williams","Isabel Williams","Lee Jones","Sam Smith"];
-      const seed = dt.toISOString().slice(0,10).replace(/-/g,''),
-            hash = Array.from(seed).reduce((h,ch)=>ch.charCodeAt(0)+((h<<5)-h),0);
-      function rand(h){ return Math.sin(h)*10000-Math.floor(Math.sin(h)*10000); }
-      const arr = members.slice(), n = arr.length;
-      for (let i=n-1;i>0;i--){
+      const seed = dt.toISOString().slice(0,10).replace(/-/g,''), 
+            hash = [...seed].reduce((h,ch)=>h*31 + ch.charCodeAt(0), 0);
+      function rand(h){ return Math.sin(h)*10000 - Math.floor(Math.sin(h)*10000); }
+      const arr = members.slice();
+      arr.sort((_,__)=>0); // ensure copy
+      for (let i=arr.length-1;i>0;i--){
         const j = Math.floor(rand(hash+i)*(i+1));
         [arr[i],arr[j]] = [arr[j],arr[i]];
       }
-      arr.slice(0,2).forEach(m=>{
-        const li=document.createElement('li');
-        li.textContent=m;
+      arr.slice(0,2).forEach(m => {
+        const li = document.createElement('li');
+        li.textContent = m;
         document.getElementById("prayer-members").appendChild(li);
       });
 
       // Podcast episodes
-      const sel = document.getElementById("episode-select"),
-            audio = document.getElementById("audio-player");
+      const sel = document.getElementById("episode-select"), audio = document.getElementById("audio-player");
       fetch(`https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss')}`)
-        .then(r => r.text())
-        .then(txt=>{
-          const xml = new DOMParser().parseFromString(txt,"text/xml");
-          const items = [...xml.querySelectorAll("item")];
+        .then(r=>r.text()).then(txt=>{
+          const items = [...new DOMParser().parseFromString(txt,"text/xml").querySelectorAll("item")];
           items.forEach((item,i)=>{
             const t = item.querySelector("title")?.textContent || `Episode ${i+1}`,
                   u = item.querySelector("enclosure")?.getAttribute("url");
-            const opt = document.createElement('option');
-            opt.value = u;
-            opt.textContent = t;
+            const opt = document.createElement("option");
+            opt.value = u; opt.textContent = t;
             sel.appendChild(opt);
           });
-          sel.selectedIndex = 0;
-          audio.src = sel.options[0].value;
-          sel.onchange = () => { audio.src = sel.value; };
-        })
-        .catch(e => {
-          document.getElementById("podcast-player").innerHTML =
-            `<p style="color:red;">Podcast load failed: ${e.message}</p>`;
+          sel.selectedIndex=0;
+          audio.src = sel.value;
+          sel.onchange = ()=> audio.src = sel.value;
+        }).catch(e=>{
+          document.getElementById("podcast-player").innerHTML = `<p style="color:red;">Podcast load failed: ${e.message}</p>`;
         });
 
-      // Dropdown toggles
-      const headers = document.querySelectorAll(".collapsible-header");
-      headers.forEach(header => {
-        header.addEventListener("click", () => {
-          const content = header.nextElementSibling;
-          header.classList.toggle("active");
-          content.classList.toggle("show");
+      // Psalm of The Day (random from 1–150)
+      const psNum = Math.floor(rand(hash)*150) + 1;
+      fetch(`https://bible-api.com/psalm ${psNum}?translation=web`)
+        .then(r=>r.json()).then(data=>{
+          document.getElementById("psalm-content").innerHTML = data.text.replace(/\n/g,'<br>');
+        }).catch(()=> {
+          document.getElementById("psalm-content").textContent = "Failed to load Psalm.";
         });
-      });
     });
   </script>
 </body>
