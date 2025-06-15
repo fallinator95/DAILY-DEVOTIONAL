@@ -27,7 +27,7 @@
 
     .top-container {
       max-width: 900px;
-      margin: 15px auto 20px; /* Reduced top margin from 50px to 15px */
+      margin: 15px auto 20px;
       padding: 0 15px;
       display: flex;
       flex-wrap: wrap;
@@ -74,6 +74,28 @@
       border-radius: 6px;
       font-family: Helvetica, Arial, sans-serif;
     }
+
+    .podcast-player {
+      max-width: 900px;
+      margin: 20px auto 40px;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 8px;
+      font-family: Helvetica, Arial, sans-serif;
+      color: #000;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    .podcast-player h2 {
+      margin-bottom: 10px;
+    }
+
+    .podcast-player audio {
+      width: 100%;
+      border-radius: 8px;
+      outline: none;
+      box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    }
   </style>
 </head>
 <body>
@@ -94,11 +116,19 @@
     </div>
   </div>
 
+  <div class="podcast-player" id="podcast-player">
+    <h2>Latest Podcast Episode</h2>
+    <div id="episode-title">Loading...</div>
+    <audio id="audio-player" controls preload="none"></audio>
+  </div>
+
   <script>
+    // Background image
     const bgImage = document.getElementById('bg-image');
     const unsplashURL = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80';
     bgImage.style.backgroundImage = `url('${unsplashURL}')`;
 
+    // Date display
     document.addEventListener("DOMContentLoaded", function () {
       const dateElement = document.getElementById("date");
       const today = new Date();
@@ -108,6 +138,44 @@
 
       dateElement.innerHTML = `<div>${dayName}</div><div>${monthDayYear}</div>`;
     });
+
+    // Fetch and parse podcast RSS feed
+    async function loadLatestEpisode() {
+      const CORS_PROXY = 'https://api.allorigins.win/get?url='; // Free proxy to avoid CORS issues
+      const feedUrl = encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss');
+      try {
+        const response = await fetch(CORS_PROXY + feedUrl);
+        const data = await response.json();
+
+        // Parse XML string
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(data.contents, "text/xml");
+
+        // Find first <item> element (latest episode)
+        const firstItem = xml.querySelector("item");
+        if (!firstItem) throw new Error("No episodes found in RSS feed");
+
+        const title = firstItem.querySelector("title")?.textContent || "Untitled Episode";
+        const enclosure = firstItem.querySelector("enclosure");
+        const audioUrl = enclosure?.getAttribute("url");
+
+        if (!audioUrl) throw new Error("Audio URL not found");
+
+        // Update DOM
+        const titleElem = document.getElementById("episode-title");
+        const audioPlayer = document.getElementById("audio-player");
+
+        titleElem.textContent = title;
+        audioPlayer.src = audioUrl;
+
+      } catch (error) {
+        const playerDiv = document.getElementById("podcast-player");
+        playerDiv.innerHTML = `<p style="color: red;">Failed to load podcast episode: ${error.message}</p>`;
+        console.error(error);
+      }
+    }
+
+    loadLatestEpisode();
   </script>
 </body>
 </html>
