@@ -107,6 +107,8 @@
     box-sizing: border-box;
     position: relative;
     padding-right: calc(var(--arrow-padding-right) + 20px); /* extra right padding for arrow */
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid #ccc;
   }
   audio {
     width: 100%;
@@ -271,77 +273,4 @@
     const dt = new Date();
     const dayName = dt.toLocaleDateString(undefined, {weekday:'long'});
     const dayNum = dt.getDate();
-    const monthName = dt.toLocaleDateString(undefined, {month:'long'});
-    const yearNum = dt.getFullYear();
-    dateEl.innerHTML = `<div>${dayName}</div><div>${dayNum} ${monthName} ${yearNum}</div>`;
-
-    // Toggle collapsibles and arrow rotation
-    collapsibleHeaders.forEach(header => {
-      header.addEventListener("click", () => {
-        header.classList.toggle("active");
-        header.nextElementSibling.classList.toggle("show");
-      });
-    });
-
-    // Members to Pray For Today (random 2 daily)
-    const members = ["Chris Fall","Amy Fall","Aron Williams","Isabel Williams","Lee Jones","Sam Smith"];
-    // Shuffle deterministically
-    const shuffled = [...members];
-    for(let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(rand(hash + i) * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    prayerList.innerHTML = '';
-    shuffled.slice(0, 2).forEach(m => {
-      const li = document.createElement('li');
-      li.textContent = m;
-      prayerList.appendChild(li);
-    });
-
-    // Podcast episodes loading and selection
-    fetch(`https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss')}`)
-      .then(r => r.text())
-      .then(xmlText => {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-        const items = [...xmlDoc.querySelectorAll("item")];
-        items.forEach((item, i) => {
-          const title = item.querySelector("title")?.textContent || `Episode ${i + 1}`;
-          const url = item.querySelector("enclosure")?.getAttribute("url");
-          if(url) {
-            const option = document.createElement("option");
-            option.value = url;
-            option.textContent = title;
-            episodeSelect.appendChild(option);
-          }
-        });
-        episodeSelect.selectedIndex = 0;
-        audioPlayer.src = episodeSelect.value;
-        episodeSelect.onchange = () => audioPlayer.src = episodeSelect.value;
-      })
-      .catch(() => {
-        document.getElementById("podcast-player").innerHTML = `<p style="color:red;">Podcast load failed.</p>`;
-      });
-
-    // Psalm of The Day
-    const psalmNum = 1 + Math.floor(rand(hash) * 150);
-    fetch(`https://bible-api.com/psalm+${psalmNum}?translation=web`)
-      .then(res => res.json())
-      .then(data => {
-        if(data.reference && data.verses) {
-          let html = `<strong>${data.reference}</strong><br>`;
-          data.verses.forEach(v => {
-            html += `<sup>${v.verse}</sup> ${v.text.trim()} `;
-          });
-          psalmContent.innerHTML = html.trim();
-        } else {
-          psalmContent.textContent = "Failed to load Psalm.";
-        }
-      })
-      .catch(() => {
-        psalmContent.textContent = "Failed to load Psalm.";
-      });
-  });
-</script>
-</body>
-</html>
+    const monthName = dt.toLocaleDate
