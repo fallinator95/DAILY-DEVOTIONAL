@@ -57,7 +57,7 @@
     font-weight: bold;
     font-size: 3.42em;
     line-height: 1.2;
-    color: white; /* changed to white */
+    color: black; /* changed to black */
     flex: 1 1 280px;
     min-width: 280px;
     margin: calc(var(--margin-base) * 1.5); /* 50% increase */
@@ -250,14 +250,14 @@
     const storedDate = localStorage.getItem("bgDate");
     const storedUrl = localStorage.getItem("bgUrl");
     if(storedDate === seed && storedUrl) {
-      bg.style.backgroundImage = `url('${storedUrl}')`;
+      bg.style.backgroundImage = url('${storedUrl}');
     } else {
       fetch("https://api.unsplash.com/photos/random?query=landscape&orientation=landscape&client_id=aa3DZ6SZRXFXkV2Hk90D4F7XdTi6bSPbNekst2guXro")
         .then(res => res.json())
         .then(data => {
           const url = data.urls?.full || data.urls?.regular;
           if(url) {
-            bg.style.backgroundImage = `url('${url}')`;
+            bg.style.backgroundImage = url('${url}');
             localStorage.setItem("bgUrl", url);
             localStorage.setItem("bgDate", seed);
           }
@@ -273,7 +273,7 @@
     const dayNum = dt.getDate();
     const monthName = dt.toLocaleDateString(undefined, {month:'long'});
     const yearNum = dt.getFullYear();
-    dateEl.innerHTML = `<div>${dayName}</div><div>${dayNum} ${monthName} ${yearNum}</div>`;
+    dateEl.innerHTML = <div>${dayName}</div><div>${dayNum} ${monthName} ${yearNum}</div>;
 
     // Toggle collapsibles and arrow rotation
     collapsibleHeaders.forEach(header => {
@@ -299,14 +299,14 @@
     });
 
     // Podcast episodes loading and selection
-    fetch(`https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss')}`)
+    fetch(https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss')})
       .then(r => r.text())
       .then(xmlText => {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlText, "application/xml");
         const items = [...xmlDoc.querySelectorAll("item")];
         items.forEach((item, i) => {
-          const title = item.querySelector("title")?.textContent || `Episode ${i + 1}`;
+          const title = item.querySelector("title")?.textContent || Episode ${i + 1};
           const url = item.querySelector("enclosure")?.getAttribute("url");
           if(url) {
             const option = document.createElement("option");
@@ -320,13 +320,28 @@
         episodeSelect.onchange = () => audioPlayer.src = episodeSelect.value;
       })
       .catch(() => {
-        document.getElementById("podcast-player").innerHTML = `<p style="color:red;">Podcast load failed.</p>`;
+        document.getElementById("podcast-player").innerHTML = <p style="color:red;">Podcast load failed.</p>;
       });
 
     // Psalm of The Day
     const psalmNum = 1 + Math.floor(rand(hash) * 150);
-    fetch(`https://bible-api.com/psalm+${psalmNum}?translation=web`)
+    fetch(https://bible-api.com/psalm+${psalmNum}?translation=web)
       .then(res => res.json())
       .then(data => {
         if(data.reference && data.verses) {
-         
+          let html = <strong>${data.reference}</strong><br>;
+          data.verses.forEach(v => {
+            html += <sup>${v.verse}</sup> ${v.text.trim()} ;
+          });
+          psalmContent.innerHTML = html.trim();
+        } else {
+          psalmContent.textContent = "Failed to load Psalm.";
+        }
+      })
+      .catch(() => {
+        psalmContent.textContent = "Failed to load Psalm.";
+      });
+  });
+</script>
+</body>
+</html>
