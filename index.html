@@ -63,13 +63,17 @@
       text-align: left;
     }
     .arrow-icon {
-      width: 15px;
-      height: 16px;
+      width: 20px;
+      height: 14px;
       margin-left: auto;
-      margin-right: 7.5px;
+      margin-right: 7.5px; /* right padding */
       transition: transform 0.3s ease;
-      fill: #aaa;
-      stroke: #aaa;
+      stroke: #aaa; /* light grey stroke */
+      stroke-width: 7.5;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      fill: none;
+      flex-shrink: 0;
     }
     h2.active .arrow-icon {
       transform: rotate(180deg);
@@ -136,21 +140,8 @@
       <div class="box">
         <h2 class="collapsible-header">
           Verse of The Day
-          <svg class="arrow-icon" viewBox="0 0 16 16" width="15" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" >
-            <path
-              d="
-                M 3.5 5
-                A 1.5 1.5 0 0 1 4.85 4
-                L 11.15 11
-                A 1.5 1.5 0 0 1 9.65 12
-                L 3.5 5
-                Z
-              "
-              fill="#aaa"
-              stroke="#aaa"
-              stroke-width="0.5"
-              stroke-linejoin="round"
-            />
+          <svg class="arrow-icon" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M1 2 L13 2 L18 7 L13 12 L1 12 Z" />
           </svg>
         </h2>
         <div class="collapsible-content">
@@ -167,21 +158,8 @@
     <div class="box">
       <h2 class="collapsible-header">
         Members to Pray For Today
-        <svg class="arrow-icon" viewBox="0 0 16 16" width="15" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" >
-          <path
-            d="
-              M 3.5 5
-              A 1.5 1.5 0 0 1 4.85 4
-              L 11.15 11
-              A 1.5 1.5 0 0 1 9.65 12
-              L 3.5 5
-              Z
-            "
-            fill="#aaa"
-            stroke="#aaa"
-            stroke-width="0.5"
-            stroke-linejoin="round"
-          />
+        <svg class="arrow-icon" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M1 2 L13 2 L18 7 L13 12 L1 12 Z" />
         </svg>
       </h2>
       <div class="collapsible-content">
@@ -192,21 +170,8 @@
     <div class="box">
       <h2 class="collapsible-header">
         Latest RBT Reading
-        <svg class="arrow-icon" viewBox="0 0 16 16" width="15" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" >
-          <path
-            d="
-              M 3.5 5
-              A 1.5 1.5 0 0 1 4.85 4
-              L 11.15 11
-              A 1.5 1.5 0 0 1 9.65 12
-              L 3.5 5
-              Z
-            "
-            fill="#aaa"
-            stroke="#aaa"
-            stroke-width="0.5"
-            stroke-linejoin="round"
-          />
+        <svg class="arrow-icon" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M1 2 L13 2 L18 7 L13 12 L1 12 Z" />
         </svg>
       </h2>
       <div class="collapsible-content podcast-player" id="podcast-player">
@@ -218,21 +183,8 @@
     <div class="box">
       <h2 class="collapsible-header">
         The 10 Words
-        <svg class="arrow-icon" viewBox="0 0 16 16" width="15" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" >
-          <path
-            d="
-              M 3.5 5
-              A 1.5 1.5 0 0 1 4.85 4
-              L 11.15 11
-              A 1.5 1.5 0 0 1 9.65 12
-              L 3.5 5
-              Z
-            "
-            fill="#aaa"
-            stroke="#aaa"
-            stroke-width="0.5"
-            stroke-linejoin="round"
-          />
+        <svg class="arrow-icon" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M1 2 L13 2 L18 7 L13 12 L1 12 Z" />
         </svg>
       </h2>
       <div class="collapsible-content ten-words-section">
@@ -254,21 +206,8 @@
     <div class="box">
       <h2 class="collapsible-header">
         Psalm of The Day
-        <svg class="arrow-icon" viewBox="0 0 16 16" width="15" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" >
-          <path
-            d="
-              M 3.5 5
-              A 1.5 1.5 0 0 1 4.85 4
-              L 11.15 11
-              A 1.5 1.5 0 0 1 9.65 12
-              L 3.5 5
-              Z
-            "
-            fill="#aaa"
-            stroke="#aaa"
-            stroke-width="0.5"
-            stroke-linejoin="round"
-          />
+        <svg class="arrow-icon" viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <path d="M1 2 L13 2 L18 7 L13 12 L1 12 Z" />
         </svg>
       </h2>
       <div class="collapsible-content psalm-section" id="psalm-section">
