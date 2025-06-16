@@ -44,7 +44,7 @@
     }
     .date {
       font-weight: bold;
-      font-size: 3.42em;
+      font-size: 3.42em; /* 10% smaller than 3.8em */
       line-height: 1.2em;
       text-align: left;
       color: white;
@@ -110,6 +110,16 @@
     .bottom-spacer {
       height: 20px;
     }
+    .verse {
+      display: block;
+      margin-bottom: 5px;
+      line-height: 1.6em;
+    }
+    .verse sup {
+      font-size: 0.8em;
+      vertical-align: top;
+      margin-right: 2px;
+    }
   </style>
 </head>
 <body>
@@ -119,7 +129,7 @@
     <div class="flex-top">
       <div class="date" id="date"></div>
 
-      <div class="box">
+      <div class="box votd-wrapper">
         <h2 class="collapsible-header">
           Verse of The Day <span class="triangle"></span>
         </h2>
@@ -191,13 +201,13 @@
       document.getElementById('bg-image').style.backgroundImage =
         "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')";
 
-      // Set date (weekday, then month day year without comma)
+      // Set date
       const dt = new Date(),
             dayName = dt.toLocaleDateString(undefined, { weekday: 'long' }),
             monthDayYear = dt.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }).replace(',', '');
       document.getElementById("date").innerHTML = `<div>${dayName}</div><div>${monthDayYear}</div>`;
 
-      // Collapsible toggles
+      // Collapsible
       document.querySelectorAll(".collapsible-header").forEach(header => {
         header.addEventListener("click", () => {
           header.classList.toggle("active");
@@ -205,13 +215,13 @@
         });
       });
 
-      // Members to Pray For Today
+      // Members to Pray For
       const members = ["Chris Fall","Amy Fall","Aron Williams","Isabel Williams","Lee Jones","Sam Smith"];
       const seed = dt.toISOString().slice(0,10).replace(/-/g,''), 
             hash = [...seed].reduce((h,ch)=>h*31 + ch.charCodeAt(0), 0);
       function rand(h){ return Math.sin(h)*10000 - Math.floor(Math.sin(h)*10000); }
       const arr = members.slice();
-      arr.sort((_,__)=>0); // ensure copy
+      arr.sort((_,__)=>0);
       for (let i=arr.length-1;i>0;i--){
         const j = Math.floor(rand(hash+i)*(i+1));
         [arr[i],arr[j]] = [arr[j],arr[i]];
@@ -241,14 +251,21 @@
           document.getElementById("podcast-player").innerHTML = `<p style="color:red;">Podcast load failed: ${e.message}</p>`;
         });
 
-      // Psalm of The Day (random from 1–150)
+      // Psalm of The Day with verse numbers
       const psNum = Math.floor(rand(hash) * 150) + 1;
       fetch(`https://bible-api.com/psalm ${psNum}?translation=web`)
-        .then(r => r.json()).then(data => {
-          document.getElementById("psalm-content").innerHTML =
-            `<strong>Psalm ${psNum}</strong><br><br>` +
-            data.text.replace(/\n/g, '<br>');
-        }).catch(() => {
+        .then(r => r.json())
+        .then(data => {
+          const psalmRef = document.createElement("div");
+          psalmRef.innerHTML = `<strong>Psalm ${psNum}</strong><br><br>`;
+
+          const versesHtml = data.verses.map(v =>
+            `<span class="verse"><sup>${v.verse}</sup> ${v.text.trim()}</span>`
+          ).join("<br>");
+
+          document.getElementById("psalm-content").innerHTML = psalmRef.outerHTML + versesHtml;
+        })
+        .catch(() => {
           document.getElementById("psalm-content").textContent = "Failed to load Psalm.";
         });
     });
