@@ -53,6 +53,7 @@
     box-sizing: border-box;
   }
   #date {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-weight: bold;
     font-size: 3.42em;
     line-height: 1.2;
@@ -247,12 +248,10 @@
     const audioPlayer = document.getElementById("audio-player");
     const psalmContent = document.getElementById("psalm-content");
 
-    // Simple seeded random for deterministic daily values
     const seed = new Date().toISOString().slice(0,10).replace(/-/g,'');
     const hash = [...seed].reduce((h,c) => h * 31 + c.charCodeAt(0), 0);
     const rand = (h) => Math.abs(Math.sin(h)) % 1;
 
-    // Background image caching
     const storedDate = localStorage.getItem("bgDate");
     const storedUrl = localStorage.getItem("bgUrl");
     if(storedDate === seed && storedUrl) {
@@ -273,7 +272,6 @@
         });
     }
 
-    // Date display
     const dt = new Date();
     const dayName = dt.toLocaleDateString(undefined, {weekday:'long'});
     const dayNum = dt.getDate();
@@ -281,7 +279,6 @@
     const yearNum = dt.getFullYear();
     dateEl.innerHTML = `<div>${dayName}</div><div>${dayNum} ${monthName} ${yearNum}</div>`;
 
-    // Collapsible toggling
     collapsibleHeaders.forEach(header => {
       header.addEventListener("click", () => {
         header.classList.toggle("active");
@@ -289,7 +286,6 @@
       });
     });
 
-    // Members to Pray For Today (random 2 daily)
     const members = ["Chris Fall","Amy Fall","Aron Williams","Isabel Williams","Lee Jones","Sam Smith"];
     const shuffled = [...members];
     for(let i = shuffled.length - 1; i > 0; i--) {
@@ -303,7 +299,6 @@
       prayerList.appendChild(li);
     });
 
-    // Podcast episodes loading and selection
     fetch(`https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss')}`)
       .then(r => r.text())
       .then(xmlText => {
@@ -328,7 +323,6 @@
         episodeSelect.innerHTML = "<option>Error loading episodes</option>";
       });
 
-   // Psalm of The Day
     const psalmNum = 1 + Math.floor(rand(hash) * 150);
     fetch(`https://bible-api.com/psalm+${psalmNum}?translation=web`)
       .then(res => res.json())
