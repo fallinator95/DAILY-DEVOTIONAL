@@ -57,7 +57,7 @@
     font-weight: bold;
     font-size: 3.42em;
     line-height: 1.2;
-    color: black; /* changed to black */
+    color: white; /* changed to white */
     flex: 1 1 280px;
     min-width: 280px;
     margin: calc(var(--margin-base) * 1.5); /* 50% increase */
@@ -329,19 +329,4 @@
       .then(res => res.json())
       .then(data => {
         if(data.reference && data.verses) {
-          let html = `<strong>${data.reference}</strong><br>`;
-          data.verses.forEach(v => {
-            html += `<sup>${v.verse}</sup> ${v.text.trim()} `;
-          });
-          psalmContent.innerHTML = html.trim();
-        } else {
-          psalmContent.textContent = "Failed to load Psalm.";
-        }
-      })
-      .catch(() => {
-        psalmContent.textContent = "Failed to load Psalm.";
-      });
-  });
-</script>
-</body>
-</html>
+         
