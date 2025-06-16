@@ -18,7 +18,7 @@
       inset: 0;
       background-position: center center;
       background-size: cover;
-      opacity: 0.6; /* reduced opacity */
+      opacity: 0.675; /* reduced by 25% from 0.9 */
       z-index: -1;
       filter: brightness(0.9);
     }
@@ -36,11 +36,12 @@
     .box {
       background-color: rgba(255, 255, 255, 0.65);
       border-radius: 8px;
-      padding: 15px 25px;
+      padding: 15px;
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
       margin-bottom: 16.5px;
-      max-width: 100%;
       box-sizing: border-box;
+      width: 100%;
+      max-width: 900px;
     }
     .date {
       font-weight: bold;
@@ -60,7 +61,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 25px; /* equal vertical padding */
+      padding: 7.5px;
       box-sizing: border-box;
       text-align: left;
     }
@@ -71,6 +72,8 @@
       border-right: 7px solid transparent;
       border-top: 12px solid black;
       transition: transform 0.3s ease;
+      padding-top: 7.5px;
+      padding-bottom: 7.5px;
     }
     h2.active .triangle {
       transform: rotate(180deg);
@@ -78,20 +81,12 @@
     .collapsible-content {
       margin-top: 0;
       display: none;
-      padding: 15px 25px 15px 25px; /* equal top & bottom padding */
+      padding: 7.5px;
       box-sizing: border-box;
       text-align: left;
     }
     .collapsible-content.show {
       display: block;
-    }
-    /* Ensures all collapsible content areas fill the box width */
-    .votd-wrapper, .prayer-section, .podcast-player, .ten-words-section, .psalm-section {
-      width: 100%;
-    }
-    /* Remove default margins inside collapsible content for better alignment */
-    .collapsible-content > * {
-      margin: 0;
     }
     .podcast-player select {
       width: 100%;
@@ -121,16 +116,21 @@
     .ten-words-section ol li {
       margin-bottom: 6px;
     }
-    /* Psalm of the day styles */
+    .bottom-spacer {
+      height: 20px;
+    }
+    /* Ensure consistent width of collapsibles */
+    .box.votd-wrapper, .box.prayer-wrapper, .box.psalm-wrapper {
+      max-width: 900px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    /* Psalm content formatting */
     #psalm-content {
       font-style: italic;
       min-height: 60px;
+      white-space: normal !important;
       text-align: justify;
-      white-space: normal;
-      line-height: 1.4em;
-    }
-    .bottom-spacer {
-      height: 20px;
     }
   </style>
 </head>
@@ -156,7 +156,7 @@
       </div>
     </div>
 
-    <div class="box">
+    <div class="box prayer-wrapper">
       <h2 class="collapsible-header">
         Members to Pray For Today <span class="triangle"></span>
       </h2>
@@ -195,7 +195,7 @@
       </div>
     </div>
 
-    <div class="box">
+    <div class="box psalm-wrapper">
       <h2 class="collapsible-header">
         Psalm of The Day <span class="triangle"></span>
       </h2>
@@ -209,33 +209,25 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Background image with daily caching
-      const bgImageDiv = document.getElementById('bg-image');
-      const todayKey = 'daily-bg-date';
-      const todayImageKey = 'daily-bg-url';
+      // Background image - changes once per day
+      const bgImage = document.getElementById('bg-image');
+      const todayKey = 'dailyBgDate';
+      const savedDate = localStorage.getItem(todayKey);
       const todayStr = new Date().toISOString().slice(0,10);
-
-      if(localStorage.getItem(todayKey) === todayStr && localStorage.getItem(todayImageKey)) {
-        bgImageDiv.style.backgroundImage = `url('${localStorage.getItem(todayImageKey)}')`;
+      if(savedDate !== todayStr){
+        // Pick a new random landscape photo from Unsplash
+        const landscapeKeywords = ['landscape', 'nature', 'mountains', 'forest', 'lake', 'river', 'sunset', 'beach', 'valley'];
+        const keyword = landscapeKeywords[Math.floor(Math.random() * landscapeKeywords.length)];
+        const url = `https://source.unsplash.com/1600x900/?${keyword}`;
+        bgImage.style.backgroundImage = `url(${url})`;
+        localStorage.setItem(todayKey, todayStr);
+        localStorage.setItem('dailyBgUrl', url);
       } else {
-        // Get a random landscape photo from Unsplash (landscape nature keyword)
-        fetch('https://api.unsplash.com/photos/random?query=landscape,nature&orientation=landscape&client_id=aa3DZ6SZRXFXkV2Hk90D4F7XdTi6bSPbNekst2guXro')
-          .then(res => res.json())
-          .then(data => {
-            const url = data.urls?.regular || '';
-            if(url) {
-              bgImageDiv.style.backgroundImage = `url('${url}')`;
-              localStorage.setItem(todayKey, todayStr);
-              localStorage.setItem(todayImageKey, url);
-            }
-          })
-          .catch(() => {
-            // fallback image
-            bgImageDiv.style.backgroundImage = "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')";
-          });
+        const url = localStorage.getItem('dailyBgUrl');
+        if(url) bgImage.style.backgroundImage = `url(${url})`;
       }
 
-      // Date display with switched month and date, no commas
+      // Set date (weekday, then month day year without comma, switched month and day)
       const dt = new Date(),
             dayName = dt.toLocaleDateString(undefined, { weekday: 'long' }),
             month = dt.toLocaleDateString(undefined, { month: 'long' }),
@@ -251,13 +243,12 @@
         });
       });
 
-      // Members to Pray For Today (random 2)
+      // Members to Pray For Today
       const members = ["Chris Fall","Amy Fall","Aron Williams","Isabel Williams","Lee Jones","Sam Smith"];
       const seed = dt.toISOString().slice(0,10).replace(/-/g,''), 
             hash = [...seed].reduce((h,ch)=>h*31 + ch.charCodeAt(0), 0);
       function rand(h){ return Math.sin(h)*10000 - Math.floor(Math.sin(h)*10000); }
       const arr = members.slice();
-      arr.sort((_,__)=>0); // ensure copy
       for (let i=arr.length-1;i>0;i--){
         const j = Math.floor(rand(hash+i)*(i+1));
         [arr[i],arr[j]] = [arr[j],arr[i]];
@@ -289,16 +280,14 @@
 
       // Psalm of The Day (random from 1–150)
       const psNum = Math.floor(rand(hash)*150) + 1;
-      fetch(`https://bible-api.com/psalm%20${psNum}?translation=web`)
+      fetch(`https://bible-api.com/psalm ${psNum}?translation=web`)
         .then(r=>r.json()).then(data=>{
-          if(data.text) {
-            // Format with psalm reference in bold, text justified, no excessive line breaks
-            const formattedText = data.text.replace(/\n+/g,'<br>');
-            document.getElementById("psalm-content").innerHTML = `<strong>Psalm ${psNum}</strong><br>${formattedText}`;
-          } else {
-            document.getElementById("psalm-content").textContent = "Failed to load Psalm.";
-          }
-        }).catch(() => {
+          // Format with psalm reference in bold and justified, remove extra line breaks
+          const verses = data.verses || [];
+          const ref = `<strong>${data.reference}</strong><br><br>`;
+          const text = verses.map(v => v.text.trim()).join(' ');
+          document.getElementById("psalm-content").innerHTML = ref + text;
+        }).catch(()=> {
           document.getElementById("psalm-content").textContent = "Failed to load Psalm.";
         });
     });
