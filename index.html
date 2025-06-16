@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>My Private Homepage</title>
+<title>GBC Daily Devotional</title>
 <style>
   :root {
     --arrow-size: 20px;
@@ -42,7 +42,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: var(--margin-base);
+    gap: calc(var(--margin-base) * 2); /* 15px gap */
   }
   .box {
     background-color: var(--box-bg);
@@ -57,10 +57,10 @@
     font-weight: bold;
     font-size: 3.42em;
     line-height: 1.2;
-    color: white;
+    color: black; /* changed to black */
     flex: 1 1 280px;
     min-width: 280px;
-    margin-bottom: var(--margin-base);
+    margin: calc(var(--margin-base) * 1.5); /* 50% increase */
     user-select: none;
   }
   h2.collapsible-header {
@@ -105,6 +105,8 @@
     border-radius: 4px;
     font-size: 1em;
     box-sizing: border-box;
+    position: relative;
+    padding-right: calc(var(--arrow-padding-right) + 20px); /* extra right padding for arrow */
   }
   audio {
     width: 100%;
