@@ -7,9 +7,9 @@
 <style>
   :root {
     --arrow-size: 20px;
-    --arrow-color: #000; /* changed to black */
+    --arrow-color: #aaa; /* Light grey */
     --arrow-padding-right: 7.5px;
-    --box-bg: rgba(255, 255, 255, 0.8); /* changed opacity to 0.8 */
+    --box-bg: rgba(255, 255, 255, 0.65);
     --box-radius: 8px;
     --box-shadow: 0 0 8px rgba(0,0,0,0.1);
     --font-family: Helvetica, Arial, sans-serif;
@@ -46,7 +46,6 @@
   }
   .box {
     background-color: var(--box-bg);
-    opacity: 0.8; /* added for overall box opacity */
     border-radius: var(--box-radius);
     padding: var(--padding-base);
     box-shadow: var(--box-shadow);
@@ -58,7 +57,7 @@
     font-weight: bold;
     font-size: 3.42em;
     line-height: 1.2;
-    color: white; /* changed to white for contrast */
+    color: white; /* changed to black */
     flex: 1 1 280px;
     min-width: 280px;
     margin: calc(var(--margin-base) * 1.5); /* 50% increase */
@@ -81,8 +80,8 @@
     height: var(--arrow-size);
     margin-left: auto;
     margin-right: var(--arrow-padding-right);
-    fill: black; /* changed to black */
-    transition: transform 0.3s ease, fill 0.3s ease;
+    fill: white;
+    transition: transform 0.3s ease;
     flex-shrink: 0;
     shape-rendering: geometricPrecision;
   }
@@ -94,15 +93,10 @@
     padding: 0 var(--arrow-padding-right) var(--margin-base);
     box-sizing: border-box;
     text-align: left;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.5s ease, opacity 0.5s ease;
+    display: none;
   }
   .collapsible-content.show {
     display: block;
-    max-height: 1000px; /* big enough to show all content */
-    opacity: 1;
   }
   .podcast-player select {
     width: 100%;
@@ -306,39 +300,48 @@
       prayerList.appendChild(li);
     });
 
-    // Podcast episodes
-    const episodes = [
-      {title:"Episode 1 - Creation", src:"https://example.com/audio1.mp3"},
-      {title:"Episode 2 - Exodus", src:"https://example.com/audio2.mp3"},
-      {title:"Episode 3 - Psalms", src:"https://example.com/audio3.mp3"},
-    ];
-    episodes.forEach((ep, idx) => {
-      const opt = document.createElement("option");
-      opt.value = ep.src;
-      opt.textContent = ep.title;
-      episodeSelect.appendChild(opt);
-    });
-    episodeSelect.addEventListener("change", () => {
-      audioPlayer.src = episodeSelect.value;
-      audioPlayer.play();
-    });
-    if(episodes.length) {
-      episodeSelect.value = episodes[0].src;
-      audioPlayer.src = episodes[0].src;
-    }
+    // Podcast episodes loading and selection
+    fetch(`https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss')}`)
+      .then(r => r.text())
+      .then(xmlText => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, "application/xml");
+        const items = [...xmlDoc.querySelectorAll("item")];
+        items.forEach((item, i) => {
+          const title = item.querySelector("title")?.textContent || `Episode ${i + 1}`;
+          const url = item.querySelector("enclosure")?.getAttribute("url");
+          if(url) {
+            const option = document.createElement("option");
+            option.value = url;
+            option.textContent = title;
+            episodeSelect.appendChild(option);
+          }
+        });
+        episodeSelect.selectedIndex = 0;
+        audioPlayer.src = episodeSelect.value;
+        episodeSelect.onchange = () => audioPlayer.src = episodeSelect.value;
+      })
+      .catch(() => {
+        document.getElementById("podcast-player").innerHTML = `<p style="color:red;">Podcast load failed.</p>`;
+      });
 
-    // Psalm content fetch (static example)
-    fetch("https://bible-api.com/psalm+23")
+    // Psalm of The Day
+    const psalmNum = 1 + Math.floor(rand(hash) * 150);
+    fetch(`https://bible-api.com/psalm+${psalmNum}?translation=web`)
       .then(res => res.json())
       .then(data => {
-        if(data.verses) {
-          psalmContent.innerHTML = data.verses.map(v => `<p>${v.text}</p>`).join('');
+        if(data.reference && data.verses) {
+          let html = `<strong>${data.reference}</strong><br>`;
+          data.verses.forEach(v => {
+            html += `<sup>${v.verse}</sup> ${v.text.trim()} `;
+          });
+          psalmContent.innerHTML = html.trim();
         } else {
-          psalmContent.textContent = "Psalm not found.";
+          psalmContent.textContent = "Failed to load Psalm.";
         }
       })
       .catch(() => {
-        psalmContent.textContent = "Error loading Psalm.";
+        psalmContent.textContent = "Failed to load Psalm.";
       });
   });
 </script>
