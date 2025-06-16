@@ -92,7 +92,7 @@
   }
   /* Dropdown content styles */
   .collapsible-content {
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.65); /* same as dropdown box */
     overflow: hidden;
     max-height: 0;
     opacity: 0;
@@ -104,7 +104,7 @@
   .collapsible-content.show {
     max-height: 1000px; /* large enough for all content */
     opacity: 1;
-    padding-bottom: 20px; /* consistent bottom spacing */
+    padding-bottom: 12px; /* match left/right padding */
   }
   .podcast-player select {
     width: 100%;
@@ -338,18 +338,14 @@
     fetch(`https://bible-api.com/psalm+${psalmNum}?translation=web`)
       .then(res => res.json())
       .then(data => {
-        if(data.reference && data.verses) {
-          let html = `<strong>${data.reference}</strong><br>`;
-          data.verses.forEach(v => {
-            html += `<sup>${v.verse}</sup> ${v.text.trim()} `;
-          });
-          psalmContent.innerHTML = html.trim();
+        if(data.verses) {
+          psalmContent.textContent = data.verses.map(v => v.text).join(" ");
         } else {
-          psalmContent.textContent = "Failed to load Psalm.";
+          psalmContent.textContent = "Psalm content not available today.";
         }
       })
       .catch(() => {
-        psalmContent.textContent = "Failed to load Psalm.";
+        psalmContent.textContent = "Psalm content not available today.";
       });
   });
 </script>
