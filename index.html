@@ -69,6 +69,9 @@
       margin-right: 7.5px;
       transition: transform 0.3s ease;
       fill: #555; /* grey color */
+      stroke: #555;
+      stroke-linejoin: round;
+      stroke-width: 0.5px;
     }
     h2.active .arrow-icon {
       transform: rotate(180deg);
@@ -135,7 +138,9 @@
       <div class="box">
         <h2 class="collapsible-header">
           Verse of The Day
-          <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+          <svg class="arrow-icon" viewBox="0 0 16 16" width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <polygon points="8,5 11.598,10.5 4.402,10.5" fill="#555" stroke="#555" stroke-width="0.5" stroke-linejoin="round"/>
+          </svg>
         </h2>
         <div class="collapsible-content">
           <script src="https://www.biblegateway.com/votd/votd.write.callback.js"></script>
@@ -151,7 +156,9 @@
     <div class="box">
       <h2 class="collapsible-header">
         Members to Pray For Today
-        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        <svg class="arrow-icon" viewBox="0 0 16 16" width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <polygon points="8,5 11.598,10.5 4.402,10.5" fill="#555" stroke="#555" stroke-width="0.5" stroke-linejoin="round"/>
+        </svg>
       </h2>
       <div class="collapsible-content">
         <ul class="members-list" id="prayer-members"></ul>
@@ -161,7 +168,9 @@
     <div class="box">
       <h2 class="collapsible-header">
         Latest RBT Reading
-        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        <svg class="arrow-icon" viewBox="0 0 16 16" width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <polygon points="8,5 11.598,10.5 4.402,10.5" fill="#555" stroke="#555" stroke-width="0.5" stroke-linejoin="round"/>
+        </svg>
       </h2>
       <div class="collapsible-content podcast-player" id="podcast-player">
         <select id="episode-select"></select>
@@ -172,7 +181,9 @@
     <div class="box">
       <h2 class="collapsible-header">
         The 10 Words
-        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        <svg class="arrow-icon" viewBox="0 0 16 16" width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <polygon points="8,5 11.598,10.5 4.402,10.5" fill="#555" stroke="#555" stroke-width="0.5" stroke-linejoin="round"/>
+        </svg>
       </h2>
       <div class="collapsible-content ten-words-section">
         <ol>
@@ -193,7 +204,9 @@
     <div class="box">
       <h2 class="collapsible-header">
         Psalm of The Day
-        <svg class="arrow-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+        <svg class="arrow-icon" viewBox="0 0 16 16" width="16" height="16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+          <polygon points="8,5 11.598,10.5 4.402,10.5" fill="#555" stroke="#555" stroke-width="0.5" stroke-linejoin="round"/>
+        </svg>
       </h2>
       <div class="collapsible-content psalm-section" id="psalm-section">
         <div id="psalm-content">Loading...</div>
