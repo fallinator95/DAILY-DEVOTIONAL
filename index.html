@@ -348,34 +348,6 @@
 <div id="spurgeon-quote" style="margin: 2rem auto; padding: 1rem; max-width: 600px; background-color: #f9f9f9; border-left: 4px solid #333; font-style: italic; text-align: center;">
   Loading today's Spurgeon quote…
 </div>
-
-<!-- Footer logo/image -->
-<img src="logo.png" alt="Logo" style="display: block; margin: 2rem auto; max-width: 150px;">
-
-<!-- Spurgeon Quote Script -->
-<script>
-  const quoteBox = document.getElementById('spurgeon-quote');
-  const storedQuote = localStorage.getItem('spurgeonQuote');
-  const storedDate = localStorage.getItem('spurgeonQuoteDate');
-  const today = new Date().toISOString().split('T')[0];
-
-  if (storedQuote && storedDate === today) {
-    quoteBox.textContent = storedQuote;
-  } else {
-    fetch('https://quote-garden.herokuapp.com/api/v3/quotes/random?author=Charles%20Haddon%20Spurgeon')
-      .then(res => res.json())
-      .then(json => {
-        const quote = `"${json.data[0].quoteText}" — Charles Spurgeon`;
-        quoteBox.textContent = quote;
-        localStorage.setItem('spurgeonQuote', quote);
-        localStorage.setItem('spurgeonQuoteDate', today);
-      })
-      .catch(err => {
-        console.error(err);
-        const fallback = `"By perseverance the snail reached the ark." — Charles Spurgeon`;
-        quoteBox.textContent = fallback;
-      });
-  }
 </script>
   <div style="width: 50%; margin: 0 auto; text-align: center; padding-top: 1rem;">
   <img
