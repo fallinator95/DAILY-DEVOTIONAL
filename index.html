@@ -7,13 +7,16 @@
 <style>
   :root {
     --arrow-size: 20px;
-    --arrow-color: #aaa;
+    --arrow-color: #aaa; /* Light grey */
     --arrow-padding-right: 7.5px;
     --box-bg: rgba(255, 255, 255, 0.65);
     --box-radius: 8px;
     --box-shadow: 0 0 8px rgba(0,0,0,0.1);
     --font-family: Helvetica, Arial, sans-serif;
-    --padding-base: 15px;
+    --padding-base: 7.5px;
+    --margin-base: 7.5px;
+    --heading-color: var(--arrow-color); /* Use same color */
+    --line-height-base: 1.5;
   }
   /* Reset & basics */
   html, body {
@@ -32,21 +35,21 @@
   }
   .container {
     max-width: 900px;
-    margin: 20px auto;
-    padding: 0 20px;
+    margin: var(--margin-base) auto;
+    padding: 0 var(--margin-base);
   }
   .flex-top {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 15px;
+    gap: var(--margin-base);
   }
   .box {
     background-color: var(--box-bg);
     border-radius: var(--box-radius);
     padding: var(--padding-base);
     box-shadow: var(--box-shadow);
-    margin-bottom: 16.5px;
+    margin-bottom: var(--margin-base);
     width: 100%;
     box-sizing: border-box;
   }
@@ -57,7 +60,7 @@
     color: white;
     flex: 1 1 280px;
     min-width: 280px;
-    margin-bottom: 15px;
+    margin-bottom: var(--margin-base);
     user-select: none;
   }
   h2.collapsible-header {
@@ -68,8 +71,9 @@
     user-select: none;
     display: flex;
     align-items: center;
-    padding: 7.5px;
+    padding: var(--padding-base);
     box-sizing: border-box;
+    color: var(--heading-color); /* Match arrow color */
   }
   .arrow-icon {
     width: var(--arrow-size);
@@ -85,8 +89,8 @@
     transform: rotate(180deg);
   }
   .collapsible-content {
-    margin-top: 10px;
-    padding: 0 7.5px 7.5px;
+    margin-top: var(--margin-base);
+    padding: 0 var(--arrow-padding-right) var(--margin-base);
     box-sizing: border-box;
     text-align: left;
     display: none;
@@ -96,8 +100,8 @@
   }
   .podcast-player select {
     width: 100%;
-    margin-bottom: 11.25px;
-    padding: 8px;
+    margin-bottom: var(--margin-base);
+    padding: var(--padding-base);
     border-radius: 4px;
     font-size: 1em;
     box-sizing: border-box;
@@ -114,23 +118,26 @@
     margin: 0;
   }
   ul.members-list li {
-    margin: 3.75px 0;
+    margin: var(--margin-base) 0;
   }
   .ten-words-section ol {
-    padding-left: 20px;
+    padding-left: 0; /* Remove default indent */
     margin: 0;
+    list-style-position: inside; /* Align numbers with text */
+    text-align: left; /* Align text with heading */
   }
   .ten-words-section ol li {
-    margin-bottom: 6px;
+    margin-bottom: var(--margin-base);
   }
   #psalm-content {
-    font-style: italic;
+    font-style: normal; /* Remove italics */
+    line-height: var(--line-height-base);
     min-height: 60px;
     white-space: normal;
     text-align: justify;
   }
   .bottom-spacer {
-    height: 20px;
+    height: var(--margin-base);
   }
 </style>
 </head>
