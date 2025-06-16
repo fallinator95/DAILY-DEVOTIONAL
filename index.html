@@ -9,7 +9,7 @@
     --arrow-size: 20px;
     --arrow-color: black;
     --arrow-padding-right: 7.5px;
-    --box-bg: rgba(255, 255, 255, 0.8); /* changed to 0.8 opacity */
+    --box-bg: rgba(255, 255, 255, 0.8);
     --box-radius: 8px;
     --box-shadow: 0 0 8px rgba(0,0,0,0.1);
     --font-family: Helvetica, Arial, sans-serif;
@@ -44,7 +44,7 @@
     gap: calc(var(--margin-base) * 2);
   }
   .box {
-    background-color: var(--box-bg); /* updated to 0.8 */
+    background-color: var(--box-bg);
     border-radius: var(--box-radius);
     padding: var(--padding-base);
     box-shadow: var(--box-shadow);
@@ -88,19 +88,19 @@
     transform: rotate(90deg);
   }
   .collapsible-content {
-    background-color: var(--box-bg); /* updated */
+    background-color: rgba(255, 255, 255, 0.8);
     overflow: hidden;
     max-height: 0;
     opacity: 0;
-    padding: 0 12px;
+    padding: 0 var(--padding-base);
     box-sizing: border-box;
     text-align: left;
-    transition: max-height 0.5s ease, opacity 0.5s ease, padding-bottom 0.3s ease;
+    transition: max-height 0.5s ease, opacity 0.5s ease, padding 0.3s ease;
   }
   .collapsible-content.show {
     max-height: 1000px;
     opacity: 1;
-    padding-bottom: 12px;
+    padding: var(--padding-base);
   }
   .podcast-player select {
     width: 100%;
@@ -111,7 +111,7 @@
     box-sizing: border-box;
     position: relative;
     padding-right: calc(var(--arrow-padding-right) + 20px);
-    background-color: rgba(255, 255, 255, 0.8); /* updated */
+    background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid #ccc;
   }
   audio {
@@ -346,8 +346,8 @@
       .catch(() => {
         psalmContent.textContent = "Failed to load Psalm.";
       });
-
   });
 </script>
+
 </body>
 </html>
