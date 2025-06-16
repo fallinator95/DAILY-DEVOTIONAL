@@ -6,209 +6,265 @@
 <title>GBC Daily Devotional</title>
 <style>
   :root {
-    --arrow-size: 18px;
-    --arrow-color: #2a2a2a;
-    --arrow-rotation: 90deg;
-    --box-bg: rgba(255, 255, 255, 0.95);
-    --box-radius: 10px;
-    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --padding-base: 10px;
-    --margin-base: 10px;
-    --transition-speed: 0.3s;
+    --arrow-size: 20px;
+    --arrow-color: #000; /* changed to black */
+    --arrow-padding-right: 7.5px;
+    --box-bg: rgba(255, 255, 255, 0.8); /* changed opacity to 0.8 */
+    --box-radius: 8px;
+    --box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    --font-family: Helvetica, Arial, sans-serif;
+    --padding-base: 7.5px;
+    --margin-base: 7.5px;
+    --heading-color: var(--arrow-color); /* Use same color */
+    --line-height-base: 1.5;
   }
-
-  body, html {
-    margin: 0; padding: 0;
+  /* Reset & basics */
+  html, body {
+    margin: 0; padding: 0; min-height: 100%;
     font-family: var(--font-family);
-    background: transparent;
+    background: transparent; 
     color: #000;
   }
-
   #bg-image {
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-position: center;
     background-size: cover;
     opacity: 0.8;
     z-index: -1;
     filter: brightness(0.9);
   }
-
   .container {
     max-width: 900px;
     margin: var(--margin-base) auto;
     padding: 0 var(--margin-base);
   }
-
-  #date {
-    font-size: 3em;
-    font-weight: bold;
-    color: white;
-    margin: var(--margin-base) 0;
-    user-select: none;
+  .flex-top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: calc(var(--margin-base) * 2); /* 15px gap */
   }
-
   .box {
     background-color: var(--box-bg);
+    opacity: 0.8; /* added for overall box opacity */
     border-radius: var(--box-radius);
+    padding: var(--padding-base);
     box-shadow: var(--box-shadow);
-    padding: var(--padding-base);
     margin-bottom: var(--margin-base);
-  }
-
-  .collapsible-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.1em;
-    padding: var(--padding-base);
-    background: none;
-    border: none;
     width: 100%;
     box-sizing: border-box;
-    transition: background var(--transition-speed);
   }
-
-  .collapsible-header:focus {
-    outline: 2px solid #ccc;
+  #date {
+    font-weight: bold;
+    font-size: 3.42em;
+    line-height: 1.2;
+    color: white; /* changed to white for contrast */
+    flex: 1 1 280px;
+    min-width: 280px;
+    margin: calc(var(--margin-base) * 1.5); /* 50% increase */
+    user-select: none;
   }
-
+  h2.collapsible-header {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    padding: var(--padding-base);
+    box-sizing: border-box;
+    color: black; /* Match arrow color */
+  }
   .arrow-icon {
     width: var(--arrow-size);
     height: var(--arrow-size);
-    fill: var(--arrow-color);
-    transition: transform var(--transition-speed);
+    margin-left: auto;
+    margin-right: var(--arrow-padding-right);
+    fill: black; /* changed to black */
+    transition: transform 0.3s ease, fill 0.3s ease;
+    flex-shrink: 0;
+    shape-rendering: geometricPrecision;
   }
-
-  .collapsible-header.active .arrow-icon {
-    transform: rotate(var(--arrow-rotation));
+  h2.active .arrow-icon {
+    transform: rotate(90deg);
   }
-
   .collapsible-content {
-    display: none;
-    padding: var(--padding-base);
-    border-top: 1px solid #ddd;
-    animation: fadeIn var(--transition-speed) ease-in-out;
+    margin-top: var(--margin-base);
+    padding: 0 var(--arrow-padding-right) var(--margin-base);
+    box-sizing: border-box;
+    text-align: left;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
   }
-
   .collapsible-content.show {
     display: block;
+    max-height: 1000px; /* big enough to show all content */
+    opacity: 1;
   }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
   .podcast-player select {
     width: 100%;
-    padding: var(--padding-base);
-    font-size: 1em;
-    border-radius: 4px;
     margin-bottom: var(--margin-base);
+    padding: var(--padding-base);
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    position: relative;
+    padding-right: calc(var(--arrow-padding-right) + 20px); /* extra right padding for arrow */
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1px solid #ccc;
   }
-
   audio {
     width: 100%;
-    margin-top: var(--margin-base);
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    border-radius: var(--box-radius);
+    outline: none;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
   }
-
-  ul.members-list, ol {
-    list-style-position: inside;
-    margin: 0;
+  ul.members-list {
+    list-style: none;
     padding-left: 0;
+    margin: 0;
   }
-
-  ul.members-list li, ol li {
+  ul.members-list li {
+    margin: var(--margin-base) 0;
+  }
+  .ten-words-section ol {
+    padding-left: 0; /* Remove default indent */
+    margin: 0;
+    list-style-position: inside; /* Align numbers with text */
+    text-align: left; /* Align text with heading */
+  }
+  .ten-words-section ol li {
     margin-bottom: var(--margin-base);
   }
-
   #psalm-content {
-    text-align: justify;
-    line-height: 1.5;
+    font-style: normal; /* Remove italics */
+    line-height: var(--line-height-base);
     min-height: 60px;
+    white-space: normal;
+    text-align: justify;
+  }
+  .bottom-spacer {
+    height: var(--margin-base);
   }
 </style>
 </head>
 <body>
-<div id="bg-image"></div>
-<div class="container">
-  <div id="date"></div>
+  <div id="bg-image"></div>
+  <div class="container">
 
-  <div class="box">
-    <button class="collapsible-header">
-      Daily Scripture
-      <svg class="arrow-icon" viewBox="0 0 24 24">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-    </button>
-    <div class="collapsible-content" id="psalm-content">Loading...</div>
-  </div>
+    <div class="flex-top">
+      <div id="date"></div>
 
-  <div class="box">
-    <button class="collapsible-header">
-      Podcast
-      <svg class="arrow-icon" viewBox="0 0 24 24">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-    </button>
-    <div class="collapsible-content podcast-player" id="podcast-player">
-      <select id="episode-select"></select>
-      <audio id="audio-player" controls></audio>
+      <div class="box">
+        <h2 class="collapsible-header">
+          Verse of The Day
+          <svg class="arrow-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 4 L14 10 L6 16 Z" />
+          </svg>
+        </h2>
+        <div class="collapsible-content">
+          <script src="https://www.biblegateway.com/votd/votd.write.callback.js"></script>
+          <script src="https://www.biblegateway.com/votd/get/?format=json&version=NIV&callback=BG.votdWriteCallback"></script>
+          <noscript>
+            <iframe src="https://www.biblegateway.com/votd/get/?format=html&version=NIV"
+              title="Verse of the Day" width="100%" height="200"></iframe>
+          </noscript>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="box">
-    <button class="collapsible-header">
-      Prayer List
-      <svg class="arrow-icon" viewBox="0 0 24 24">
-        <path d="M8 5v14l11-7z"/>
-      </svg>
-    </button>
-    <div class="collapsible-content">
-      <ul class="members-list" id="prayer-members"></ul>
+    <div class="box">
+      <h2 class="collapsible-header">
+        Members to Pray For Today
+        <svg class="arrow-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 4 L14 10 L6 16 Z" />
+        </svg>
+      </h2>
+      <div class="collapsible-content">
+        <ul class="members-list" id="prayer-members"></ul>
+      </div>
     </div>
+
+    <div class="box">
+      <h2 class="collapsible-header">
+        Latest RBT Reading
+        <svg class="arrow-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 4 L14 10 L6 16 Z" />
+        </svg>
+      </h2>
+      <div class="collapsible-content podcast-player" id="podcast-player">
+        <select id="episode-select"></select>
+        <audio id="audio-player" controls preload="none"></audio>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2 class="collapsible-header">
+        The 10 Words
+        <svg class="arrow-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 4 L14 10 L6 16 Z" />
+        </svg>
+      </h2>
+      <div class="collapsible-content ten-words-section">
+        <ol>
+          <li>You shall have no other gods before me.</li>
+          <li>You shall not make for yourself a carved image.</li>
+          <li>You shall not take the name of the Lord your God in vain.</li>
+          <li>Remember the Sabbath day, to keep it holy.</li>
+          <li>Honor your father and your mother.</li>
+          <li>You shall not murder.</li>
+          <li>You shall not commit adultery.</li>
+          <li>You shall not steal.</li>
+          <li>You shall not bear false witness against your neighbor.</li>
+          <li>You shall not covet.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2 class="collapsible-header">
+        Psalm of The Day
+        <svg class="arrow-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 4 L14 10 L6 16 Z" />
+        </svg>
+      </h2>
+      <div class="collapsible-content psalm-section" id="psalm-section">
+        <div id="psalm-content">Loading...</div>
+      </div>
+    </div>
+
+    <div class="bottom-spacer"></div>
   </div>
-</div>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const formatDate = () => {
-      const dt = new Date();
-      return `<div>${dt.toLocaleDateString(undefined, {weekday:'long'})}</div><div>${dt.getDate()} ${dt.toLocaleDateString(undefined, {month:'long'})} ${dt.getFullYear()}</div>`;
-    };
-    document.getElementById("date").innerHTML = formatDate();
+    const bg = document.getElementById('bg-image');
+    const dateEl = document.getElementById("date");
+    const collapsibleHeaders = document.querySelectorAll(".collapsible-header");
+    const prayerList = document.getElementById("prayer-members");
+    const episodeSelect = document.getElementById("episode-select");
+    const audioPlayer = document.getElementById("audio-player");
+    const psalmContent = document.getElementById("psalm-content");
 
-    document.querySelectorAll(".collapsible-header").forEach(header => {
-      header.addEventListener("click", () => {
-        header.classList.toggle("active");
-        const content = header.nextElementSibling;
-        content.classList.toggle("show");
-      });
-    });
+    // Helper: Simple seeded random (sin based)
+    const seed = new Date().toISOString().slice(0,10).replace(/-/g,'');
+    const hash = [...seed].reduce((h,c) => h * 31 + c.charCodeAt(0), 0);
+    const rand = (h) => Math.abs(Math.sin(h)) % 1;
 
-    const hash = [...new Date().toISOString().slice(0,10).replace(/-/g,'')].reduce((h,c)=>h*31+c.charCodeAt(0),0);
-    const rand = h => Math.abs(Math.sin(h)) % 1;
-
-    // Background image
-    const bg = document.getElementById("bg-image");
+    // Set daily background image with caching
     const storedDate = localStorage.getItem("bgDate");
     const storedUrl = localStorage.getItem("bgUrl");
-    const seed = new Date().toISOString().slice(0,10);
-
-    if (storedDate === seed && storedUrl) {
+    if(storedDate === seed && storedUrl) {
       bg.style.backgroundImage = `url('${storedUrl}')`;
     } else {
       fetch("https://api.unsplash.com/photos/random?query=landscape&orientation=landscape&client_id=aa3DZ6SZRXFXkV2Hk90D4F7XdTi6bSPbNekst2guXro")
         .then(res => res.json())
         .then(data => {
           const url = data.urls?.full || data.urls?.regular;
-          if (url) {
+          if(url) {
             bg.style.backgroundImage = `url('${url}')`;
             localStorage.setItem("bgUrl", url);
             localStorage.setItem("bgDate", seed);
@@ -219,14 +275,30 @@
         });
     }
 
-    // Prayer list shuffle
+    // Set date display (two lines)
+    const dt = new Date();
+    const dayName = dt.toLocaleDateString(undefined, {weekday:'long'});
+    const dayNum = dt.getDate();
+    const monthName = dt.toLocaleDateString(undefined, {month:'long'});
+    const yearNum = dt.getFullYear();
+    dateEl.innerHTML = `<div>${dayName}</div><div>${dayNum} ${monthName} ${yearNum}</div>`;
+
+    // Toggle collapsibles and arrow rotation
+    collapsibleHeaders.forEach(header => {
+      header.addEventListener("click", () => {
+        header.classList.toggle("active");
+        header.nextElementSibling.classList.toggle("show");
+      });
+    });
+
+    // Members to Pray For Today (random 2 daily)
     const members = ["Chris Fall","Amy Fall","Aron Williams","Isabel Williams","Lee Jones","Sam Smith"];
+    // Shuffle deterministically
     const shuffled = [...members];
-    for (let i = shuffled.length - 1; i > 0; i--) {
+    for(let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(rand(hash + i) * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    const prayerList = document.getElementById("prayer-members");
     prayerList.innerHTML = '';
     shuffled.slice(0, 2).forEach(m => {
       const li = document.createElement('li');
@@ -234,45 +306,39 @@
       prayerList.appendChild(li);
     });
 
-    // Podcast
-    fetch(`https://corsproxy.io/?${encodeURIComponent('https://anchor.fm/s/5073b270/podcast/rss')}`)
-      .then(r => r.text())
-      .then(xml => {
-        const doc = new DOMParser().parseFromString(xml, "application/xml");
-        const items = [...doc.querySelectorAll("item")];
-        const select = document.getElementById("episode-select");
-        const audio = document.getElementById("audio-player");
-        items.forEach((item, i) => {
-          const title = item.querySelector("title")?.textContent || `Episode ${i+1}`;
-          const url = item.querySelector("enclosure")?.getAttribute("url");
-          if (url) {
-            const opt = document.createElement("option");
-            opt.value = url;
-            opt.textContent = title;
-            select.appendChild(opt);
-          }
-        });
-        select.selectedIndex = 0;
-        audio.src = select.value;
-        select.onchange = () => audio.src = select.value;
-      })
-      .catch(() => {
-        document.getElementById("podcast-player").innerHTML = `<p style="color:red;">Podcast load failed.</p>`;
-      });
+    // Podcast episodes
+    const episodes = [
+      {title:"Episode 1 - Creation", src:"https://example.com/audio1.mp3"},
+      {title:"Episode 2 - Exodus", src:"https://example.com/audio2.mp3"},
+      {title:"Episode 3 - Psalms", src:"https://example.com/audio3.mp3"},
+    ];
+    episodes.forEach((ep, idx) => {
+      const opt = document.createElement("option");
+      opt.value = ep.src;
+      opt.textContent = ep.title;
+      episodeSelect.appendChild(opt);
+    });
+    episodeSelect.addEventListener("change", () => {
+      audioPlayer.src = episodeSelect.value;
+      audioPlayer.play();
+    });
+    if(episodes.length) {
+      episodeSelect.value = episodes[0].src;
+      audioPlayer.src = episodes[0].src;
+    }
 
-    // Psalm
-    fetch(`https://bible-api.com/psalm+${1 + Math.floor(rand(hash) * 150)}?translation=web`)
+    // Psalm content fetch (static example)
+    fetch("https://bible-api.com/psalm+23")
       .then(res => res.json())
       .then(data => {
-        const psalm = document.getElementById("psalm-content");
-        if (data.reference && data.verses) {
-          psalm.innerHTML = `<strong>${data.reference}</strong><br>` + data.verses.map(v => `<sup>${v.verse}</sup> ${v.text.trim()}`).join(' ');
+        if(data.verses) {
+          psalmContent.innerHTML = data.verses.map(v => `<p>${v.text}</p>`).join('');
         } else {
-          psalm.textContent = "Failed to load Psalm.";
+          psalmContent.textContent = "Psalm not found.";
         }
       })
       .catch(() => {
-        document.getElementById("psalm-content").textContent = "Failed to load Psalm.";
+        psalmContent.textContent = "Error loading Psalm.";
       });
   });
 </script>
