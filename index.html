@@ -333,13 +333,23 @@
         episodeSelect.innerHTML = "<option>Error loading episodes</option>";
       });
 
-    // Psalm of the Day fetch (static example text here)
-    fetch("https://www.biblegateway.com/votd/votd.write.callback.js")
-      .then(() => {
-        psalmContent.textContent = "The Lord is my shepherd; I shall not want. — Psalm 23:1";
+    // Psalm of The Day
+    const psalmNum = 1 + Math.floor(rand(hash) * 150);
+    fetch(`https://bible-api.com/psalm+${psalmNum}?translation=web`)
+      .then(res => res.json())
+      .then(data => {
+        if(data.reference && data.verses) {
+          let html = `<strong>${data.reference}</strong><br>`;
+          data.verses.forEach(v => {
+            html += `<sup>${v.verse}</sup> ${v.text.trim()} `;
+          });
+          psalmContent.innerHTML = html.trim();
+        } else {
+          psalmContent.textContent = "Failed to load Psalm.";
+        }
       })
       .catch(() => {
-        psalmContent.textContent = "Psalm content not available.";
+        psalmContent.textContent = "Failed to load Psalm.";
       });
   });
 </script>
