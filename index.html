@@ -18,7 +18,7 @@
       inset: 0;
       background-position: center center;
       background-size: cover;
-      opacity: 0.675; /* reduced by 25% from 0.9 */
+      opacity: 0.675; /* reduced opacity by 25% from 0.9 */
       z-index: -1;
       filter: brightness(0.9);
     }
@@ -39,9 +39,9 @@
       padding: 15px;
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
       margin-bottom: 16.5px;
-      box-sizing: border-box;
       width: 100%;
       max-width: 900px;
+      box-sizing: border-box;
     }
     .date {
       font-weight: bold;
@@ -51,6 +51,7 @@
       color: white;
       flex: 1 1 280px;
       min-width: 280px;
+      margin-bottom: 15px;
     }
     h2 {
       margin: 0;
@@ -61,9 +62,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 7.5px;
+      padding: 7.5px 7.5px 7.5px 7.5px; /* 7.5px padding all around */
       box-sizing: border-box;
-      text-align: left;
     }
     .triangle {
       width: 0;
@@ -72,16 +72,21 @@
       border-right: 7px solid transparent;
       border-top: 12px solid black;
       transition: transform 0.3s ease;
-      padding-top: 7.5px;
-      padding-bottom: 7.5px;
+      margin: 0;
+      /* Center vertically & horizontally with flex */
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     h2.active .triangle {
       transform: rotate(180deg);
     }
     .collapsible-content {
-      margin-top: 0;
+      margin-top: 10px;
       display: none;
-      padding: 7.5px;
+      padding-left: 7.5px;
+      padding-right: 7.5px;
+      padding-bottom: 7.5px;
       box-sizing: border-box;
       text-align: left;
     }
@@ -94,6 +99,7 @@
       padding: 8px;
       border-radius: 4px;
       font-size: 1em;
+      box-sizing: border-box;
     }
     audio {
       width: 100%;
@@ -119,18 +125,21 @@
     .bottom-spacer {
       height: 20px;
     }
-    /* Ensure consistent width of collapsibles */
-    .box.votd-wrapper, .box.prayer-wrapper, .box.psalm-wrapper {
-      max-width: 900px;
+    /* Ensure consistent width for collapsible boxes */
+    .votd-wrapper, 
+    .prayer-section, 
+    .podcast-player,
+    .ten-words-section,
+    .psalm-section {
       width: 100%;
       box-sizing: border-box;
     }
-    /* Psalm content formatting */
+    /* Psalm styling */
     #psalm-content {
       font-style: italic;
       min-height: 60px;
-      white-space: normal !important;
       text-align: justify;
+      white-space: normal;
     }
   </style>
 </head>
@@ -156,7 +165,7 @@
       </div>
     </div>
 
-    <div class="box prayer-wrapper">
+    <div class="box">
       <h2 class="collapsible-header">
         Members to Pray For Today <span class="triangle"></span>
       </h2>
@@ -195,12 +204,12 @@
       </div>
     </div>
 
-    <div class="box psalm-wrapper">
+    <div class="box">
       <h2 class="collapsible-header">
         Psalm of The Day <span class="triangle"></span>
       </h2>
       <div class="collapsible-content psalm-section" id="psalm-section">
-        <div id="psalm-content">Loading...</div>
+        <div id="psalm-content" style="font-style: italic; min-height: 60px;">Loading...</div>
       </div>
     </div>
 
@@ -209,31 +218,35 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Background image - changes once per day
+      // Set daily background image from Unsplash (cached by date)
       const bgImage = document.getElementById('bg-image');
-      const todayKey = 'dailyBgDate';
-      const savedDate = localStorage.getItem(todayKey);
-      const todayStr = new Date().toISOString().slice(0,10);
-      if(savedDate !== todayStr){
-        // Pick a new random landscape photo from Unsplash
-        const landscapeKeywords = ['landscape', 'nature', 'mountains', 'forest', 'lake', 'river', 'sunset', 'beach', 'valley'];
-        const keyword = landscapeKeywords[Math.floor(Math.random() * landscapeKeywords.length)];
-        const url = `https://source.unsplash.com/1600x900/?${keyword}`;
-        bgImage.style.backgroundImage = `url(${url})`;
-        localStorage.setItem(todayKey, todayStr);
-        localStorage.setItem('dailyBgUrl', url);
+      const today = new Date().toISOString().slice(0,10);
+      const storedDate = localStorage.getItem('bgImageDate');
+      const storedUrl = localStorage.getItem('bgImageUrl');
+
+      if (storedDate === today && storedUrl) {
+        bgImage.style.backgroundImage = `url('${storedUrl}')`;
       } else {
-        const url = localStorage.getItem('dailyBgUrl');
-        if(url) bgImage.style.backgroundImage = `url(${url})`;
+        fetch('https://api.unsplash.com/photos/random?query=landscape&orientation=landscape&client_id=aa3DZ6SZRXFXkV2Hk90D4F7XdTi6bSPbNekst2guXro')
+          .then(response => response.json())
+          .then(data => {
+            const url = data.urls.full || data.urls.regular;
+            bgImage.style.backgroundImage = `url('${url}')`;
+            localStorage.setItem('bgImageUrl', url);
+            localStorage.setItem('bgImageDate', today);
+          }).catch(() => {
+            // fallback image on error
+            bgImage.style.backgroundImage = "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')";
+          });
       }
 
-      // Set date (weekday, then month day year without comma, switched month and day)
+      // Set date (weekday day month year without commas)
       const dt = new Date(),
             dayName = dt.toLocaleDateString(undefined, { weekday: 'long' }),
-            month = dt.toLocaleDateString(undefined, { month: 'long' }),
-            day = dt.getDate(),
-            year = dt.getFullYear();
-      document.getElementById("date").innerHTML = `<div>${dayName}</div><div>${month} ${day} ${year}</div>`;
+            dateNum = dt.getDate(),
+            monthName = dt.toLocaleDateString(undefined, { month: 'long' }),
+            yearNum = dt.getFullYear();
+      document.getElementById("date").innerHTML = `<div>${dayName} ${dateNum} ${monthName} ${yearNum}</div>`;
 
       // Collapsible toggles
       document.querySelectorAll(".collapsible-header").forEach(header => {
@@ -249,6 +262,7 @@
             hash = [...seed].reduce((h,ch)=>h*31 + ch.charCodeAt(0), 0);
       function rand(h){ return Math.sin(h)*10000 - Math.floor(Math.sin(h)*10000); }
       const arr = members.slice();
+      arr.sort((_,__)=>0); // ensure copy
       for (let i=arr.length-1;i>0;i--){
         const j = Math.floor(rand(hash+i)*(i+1));
         [arr[i],arr[j]] = [arr[j],arr[i]];
@@ -278,16 +292,15 @@
           document.getElementById("podcast-player").innerHTML = `<p style="color:red;">Podcast load failed: ${e.message}</p>`;
         });
 
-      // Psalm of The Day (random from 1–150)
+      // Psalm of The Day (random from 1–150) with verse notation, justified, no line breaks between verses
       const psNum = Math.floor(rand(hash)*150) + 1;
       fetch(`https://bible-api.com/psalm ${psNum}?translation=web`)
         .then(r=>r.json()).then(data=>{
-          // Format with psalm reference in bold and justified, remove extra line breaks
-          const verses = data.verses || [];
-          const ref = `<strong>${data.reference}</strong><br><br>`;
-          const text = verses.map(v => v.text.trim()).join(' ');
-          document.getElementById("psalm-content").innerHTML = ref + text;
-        }).catch(()=> {
+          const reference = `<strong>Psalm ${psNum}</strong><br><br>`;
+          // Join verses with a space to avoid excessive line breaks
+          const text = data.verses.map(v => v.text.trim()).join(' ');
+          document.getElementById("psalm-content").innerHTML = reference + text;
+        }).catch(() => {
           document.getElementById("psalm-content").textContent = "Failed to load Psalm.";
         });
     });
