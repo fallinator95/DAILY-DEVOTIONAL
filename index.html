@@ -15,7 +15,7 @@
     --font-family: Helvetica, Arial, sans-serif;
     --padding-base: 7.5px;
     --margin-base: 7.5px;
-    --heading-color: #000; /* Changed to black for dropdown headings */
+    --heading-color: var(--arrow-color); /* Use same color */
     --line-height-base: 1.5;
   }
   /* Reset & basics */
@@ -57,7 +57,7 @@
     font-weight: bold;
     font-size: 3.42em;
     line-height: 1.2;
-    color: white; /* changed to white */
+    color: black; /* changed to black */
     flex: 1 1 280px;
     min-width: 280px;
     margin: calc(var(--margin-base) * 1.5); /* 50% increase */
@@ -73,7 +73,7 @@
     align-items: center;
     padding: var(--padding-base);
     box-sizing: border-box;
-    color: var(--heading-color); /* black */
+    color: var(--heading-color); /* Match arrow color */
   }
   .arrow-icon {
     width: var(--arrow-size);
@@ -338,4 +338,10 @@
           psalmContent.textContent = "Failed to load Psalm.";
         }
       })
-      .
+      .catch(() => {
+        psalmContent.textContent = "Failed to load Psalm.";
+      });
+  });
+</script>
+</body>
+</html>
