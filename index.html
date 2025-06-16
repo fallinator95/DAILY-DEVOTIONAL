@@ -21,6 +21,7 @@
       opacity: 0.8;
       z-index: -1;
       filter: brightness(0.9);
+      transition: background-image 1s ease-in-out;
     }
     .container {
       max-width: 900px;
@@ -39,8 +40,7 @@
       padding: 15px;
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
       margin-bottom: 16.5px;
-      flex: 1 1 280px;
-      min-width: 280px;
+      max-width: 100%;
     }
     .date {
       font-weight: bold;
@@ -68,6 +68,8 @@
       border-right: 7px solid transparent;
       border-top: 12px solid black;
       transition: transform 0.3s ease;
+      order: 2; /* put triangle on far right */
+      margin-left: 8px;
     }
     h2.active .triangle {
       transform: rotate(180deg);
@@ -75,6 +77,7 @@
     .collapsible-content {
       margin-top: 10px;
       display: none;
+      max-width: 100%;
     }
     .collapsible-content.show {
       display: block;
@@ -107,18 +110,18 @@
     .ten-words-section ol li {
       margin-bottom: 6px;
     }
+    .psalm-text {
+      font-style: italic;
+      white-space: pre-wrap;
+      margin: 0;
+      line-height: 1.3em;
+    }
+    .psalm-reference {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
     .bottom-spacer {
       height: 20px;
-    }
-    .verse {
-      display: block;
-      margin-bottom: 5px;
-      line-height: 1.6em;
-    }
-    .verse sup {
-      font-size: 0.8em;
-      vertical-align: top;
-      margin-right: 2px;
     }
   </style>
 </head>
@@ -129,7 +132,7 @@
     <div class="flex-top">
       <div class="date" id="date"></div>
 
-      <div class="box votd-wrapper">
+      <div class="box votd-wrapper" style="flex: 1 1 280px; min-width: 280px; max-width: 280px;">
         <h2 class="collapsible-header">
           Verse of The Day <span class="triangle"></span>
         </h2>
@@ -188,7 +191,8 @@
         Psalm of The Day <span class="triangle"></span>
       </h2>
       <div class="collapsible-content psalm-section" id="psalm-section">
-        <div id="psalm-content" style="font-style: italic; min-height: 60px;">Loading...</div>
+        <div id="psalm-reference" class="psalm-reference">Loading...</div>
+        <div id="psalm-content" class="psalm-text">Loading...</div>
       </div>
     </div>
 
@@ -197,17 +201,27 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Background image
-      document.getElementById('bg-image').style.backgroundImage =
-        "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')";
+      // Set background with daily random landscape from Unsplash
+      const unsplashKey = 'aa3DZ6SZRXFXkV2Hk90D4F7XdTi6bSPbNekst2guXro';
+      fetch(`https://api.unsplash.com/photos/random?query=landscape&orientation=landscape&client_id=${unsplashKey}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.urls && data.urls.full) {
+            document.getElementById('bg-image').style.backgroundImage = `url('${data.urls.full}')`;
+          }
+        })
+        .catch(() => {
+          // fallback background
+          document.getElementById('bg-image').style.backgroundImage = "url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80')";
+        });
 
-      // Set date
+      // Set date (weekday, then month day year without comma)
       const dt = new Date(),
             dayName = dt.toLocaleDateString(undefined, { weekday: 'long' }),
             monthDayYear = dt.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }).replace(',', '');
       document.getElementById("date").innerHTML = `<div>${dayName}</div><div>${monthDayYear}</div>`;
 
-      // Collapsible
+      // Collapsible toggles
       document.querySelectorAll(".collapsible-header").forEach(header => {
         header.addEventListener("click", () => {
           header.classList.toggle("active");
@@ -215,13 +229,13 @@
         });
       });
 
-      // Members to Pray For
+      // Members to Pray For Today
       const members = ["Chris Fall","Amy Fall","Aron Williams","Isabel Williams","Lee Jones","Sam Smith"];
       const seed = dt.toISOString().slice(0,10).replace(/-/g,''), 
             hash = [...seed].reduce((h,ch)=>h*31 + ch.charCodeAt(0), 0);
       function rand(h){ return Math.sin(h)*10000 - Math.floor(Math.sin(h)*10000); }
       const arr = members.slice();
-      arr.sort((_,__)=>0);
+      arr.sort((_,__)=>0); // ensure copy
       for (let i=arr.length-1;i>0;i--){
         const j = Math.floor(rand(hash+i)*(i+1));
         [arr[i],arr[j]] = [arr[j],arr[i]];
@@ -251,22 +265,22 @@
           document.getElementById("podcast-player").innerHTML = `<p style="color:red;">Podcast load failed: ${e.message}</p>`;
         });
 
-      // Psalm of The Day with verse numbers
-      const psNum = Math.floor(rand(hash) * 150) + 1;
-      fetch(`https://bible-api.com/psalm ${psNum}?translation=web`)
-        .then(r => r.json())
-        .then(data => {
-          const psalmRef = document.createElement("div");
-          psalmRef.innerHTML = `<strong>Psalm ${psNum}</strong><br><br>`;
-
-          const versesHtml = data.verses.map(v =>
-            `<span class="verse"><sup>${v.verse}</sup> ${v.text.trim()}</span>`
-          ).join("<br>");
-
-          document.getElementById("psalm-content").innerHTML = psalmRef.outerHTML + versesHtml;
-        })
-        .catch(() => {
+      // Psalm of The Day (random from 1–150)
+      const psNum = Math.floor(rand(hash)*150) + 1;
+      fetch(`https://bible-api.com/psalm+${psNum}?translation=web`)
+        .then(r=>r.json()).then(data=>{
+          if(data && data.reference && data.verses){
+            // Build psalm text with verse numbers inline (no gaps between verses)
+            const versesText = data.verses.map(v => `${v.verse}. ${v.text.trim()}`).join(' ');
+            document.getElementById("psalm-reference").textContent = data.reference;
+            document.getElementById("psalm-content").textContent = versesText;
+          } else {
+            document.getElementById("psalm-content").textContent = "Failed to load Psalm.";
+            document.getElementById("psalm-reference").textContent = "";
+          }
+        }).catch(()=> {
           document.getElementById("psalm-content").textContent = "Failed to load Psalm.";
+          document.getElementById("psalm-reference").textContent = "";
         });
     });
   </script>
